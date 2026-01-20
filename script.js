@@ -1,21 +1,23 @@
 /* ==========================================================
-   ✅ FINAL WORKING PORTFOLIO JS
-   - Mobile sidebar fully fixed
-   - Smooth scroll correct
-   - Overlay works
+   ✅ FINAL WORKING PORTFOLIO JS (UPGRADED)
+   - SaaS navbar + scroll shadow
+   - Mobile sidebar fixed (overlay)
+   - Smooth scroll + header offset
+   - Scroll restoration off
    - Typing effect
    - Reveal + stagger animations
    - Active navbar highlight
    - Scroll progress bar
    - 3D tilt on projects
    ========================================================== */
+
 // ✅ Always start from top on refresh/reload
 if ("scrollRestoration" in history) {
   history.scrollRestoration = "manual";
 }
-window.onload = () => {
+window.addEventListener("load", () => {
   window.scrollTo(0, 0);
-};
+});
 
 /* ✅ Typing Effect */
 const roles = ["Frontend Developer", "UI/UX Designer", "JavaScript Learner", "Problem Solver"];
@@ -55,7 +57,6 @@ function typeEffect() {
 }
 typeEffect();
 
-
 /* ✅ Reveal Animation */
 const revealElements = document.querySelectorAll(".reveal");
 
@@ -69,7 +70,6 @@ function revealOnScroll() {
 }
 window.addEventListener("scroll", revealOnScroll);
 window.addEventListener("load", revealOnScroll);
-
 
 /* ✅ Stagger Animation */
 const staggerContainers = document.querySelectorAll("[data-stagger='true']");
@@ -91,7 +91,6 @@ function handleStaggerReveal() {
 window.addEventListener("scroll", handleStaggerReveal);
 window.addEventListener("load", handleStaggerReveal);
 
-
 /* ✅ Skills Bar Fill */
 const skillFills = document.querySelectorAll(".skill-fill");
 
@@ -109,7 +108,6 @@ function fillSkills() {
 window.addEventListener("scroll", fillSkills);
 window.addEventListener("load", fillSkills);
 
-
 /* ✅ Scroll Progress */
 const scrollProgress = document.getElementById("scrollProgress");
 
@@ -122,12 +120,18 @@ function updateProgressBar() {
 window.addEventListener("scroll", updateProgressBar);
 window.addEventListener("load", updateProgressBar);
 
+/* ✅ SaaS Navbar shadow on scroll */
+const navbar = document.getElementById("navbar");
 
-/* ✅ Mobile Sidebar (Final Fix) */
+window.addEventListener("scroll", () => {
+  if (window.scrollY > 30) navbar.classList.add("scrolled");
+  else navbar.classList.remove("scrolled");
+});
+
+/* ✅ Mobile Sidebar */
 const hamburgerBtn = document.getElementById("hamburgerBtn");
 const navLinks = document.getElementById("navLinks");
 
-/* ✅ Overlay create */
 const overlay = document.createElement("div");
 overlay.className = "mobile-overlay";
 document.body.appendChild(overlay);
@@ -144,16 +148,13 @@ function closeMenu() {
   document.body.classList.remove("menu-open");
 }
 
-hamburgerBtn.addEventListener("click", (e) => {
-  e.stopPropagation();
+hamburgerBtn.addEventListener("click", () => {
   if (navLinks.classList.contains("active")) closeMenu();
   else openMenu();
 });
 
-/* ✅ close on overlay click */
 overlay.addEventListener("click", closeMenu);
 
-/* ✅ close on escape key */
 document.addEventListener("keydown", (e) => {
   if (e.key === "Escape") closeMenu();
 });
@@ -181,7 +182,6 @@ document.querySelectorAll(".nav-links a").forEach((link) => {
   });
 });
 
-
 /* ✅ Active nav highlight on scroll */
 const sections = document.querySelectorAll("main, section, footer");
 const navItems = document.querySelectorAll(".nav-links a");
@@ -208,13 +208,12 @@ function setActiveNav() {
 window.addEventListener("scroll", setActiveNav);
 window.addEventListener("load", setActiveNav);
 
-
-/* ✅ Project Card 3D Tilt Effect (Desktop only) */
+/* ✅ Project Card 3D Tilt (desktop only) */
 const projectCards = document.querySelectorAll(".project-card");
 
 projectCards.forEach((card) => {
   card.addEventListener("mousemove", (e) => {
-    if (window.innerWidth < 800) return; // disable on mobile
+    if (window.innerWidth < 900) return;
 
     const rect = card.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -233,7 +232,6 @@ projectCards.forEach((card) => {
     card.style.transform = "rotateX(0deg) rotateY(0deg)";
   });
 });
-
 
 /* ✅ Dynamic Year */
 document.getElementById("year").textContent = new Date().getFullYear();

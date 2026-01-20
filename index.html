@@ -8,7 +8,7 @@
   <title>Rutik Kore | Portfolio</title>
 
   <!-- CSS -->
-  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="style.css"/>
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -21,16 +21,24 @@
   <!-- ✅ Scroll Progress Bar -->
   <div class="scroll-progress" id="scrollProgress"></div>
 
-  <!-- ✅ NAVBAR -->
-  <header class="navbar">
+  <!-- ✅ SAAS STYLE NAVBAR -->
+  <header class="navbar" id="navbar">
     <div class="container nav-wrapper">
 
-      <a href="#home" class="logo">
-        <span class="logo-dot"></span>
-        Rutik<span class="logo-light">.</span>
-      </a>
+      <!-- LEFT -->
+      <div class="nav-left">
+        <a href="#home" class="logo">
+          <span class="logo-dot"></span>
+          <span class="logo-text">Rutik<span class="logo-light">.dev</span></span>
+        </a>
 
-      <!-- ✅ Desktop Links -->
+        <span class="status-pill">
+          <span class="status-dot"></span>
+          Available
+        </span>
+      </div>
+
+      <!-- CENTER NAV LINKS -->
       <nav class="nav-links" id="navLinks">
         <a href="#about">About</a>
         <a href="#experience">Experience</a>
@@ -43,12 +51,29 @@
         <a href="#contact" class="nav-cta">Contact</a>
       </nav>
 
-      <!-- ✅ Mobile Menu Button -->
-      <button class="hamburger" id="hamburgerBtn" aria-label="Open Menu">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
+      <!-- RIGHT -->
+      <div class="nav-right">
+        <div class="nav-icons">
+          <a class="icon-btn" href="https://github.com/rutikkore" target="_blank" aria-label="GitHub">
+            <img src="assets/icons/github.png" alt="GitHub"/>
+          </a>
+
+          <a class="icon-btn" href="https://linkedin.com/in/rutik-kore-700a45289" target="_blank" aria-label="LinkedIn">
+            <img src="assets/icons/linkedin.png" alt="LinkedIn"/>
+          </a>
+
+          <a class="icon-btn" href="https://instagram.com/rutik_kore" target="_blank" aria-label="Instagram">
+            <img src="assets/icons/instagram.png" alt="Instagram"/>
+          </a>
+        </div>
+
+        <!-- ✅ Mobile Menu Button -->
+        <button class="hamburger" id="hamburgerBtn" aria-label="Open Menu">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
 
     </div>
   </header>
@@ -109,7 +134,7 @@
       <div class="glass-card reveal">
         <h3>Who I am</h3>
         <p>
-          I’m Hrithik Manish Kore, a second-year student and aspiring frontend developer.
+          I’m Rutik Kore, a second-year student and aspiring frontend developer.
           I enjoy making clean and modern websites with smooth animations.
         </p>
 
