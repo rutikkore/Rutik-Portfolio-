@@ -9,6 +9,13 @@
    - Scroll progress bar
    - 3D tilt on projects
    ========================================================== */
+// ✅ Always start from top on refresh/reload
+if ("scrollRestoration" in history) {
+  history.scrollRestoration = "manual";
+}
+window.onload = () => {
+  window.scrollTo(0, 0);
+};
 
 /* ✅ Typing Effect */
 const roles = ["Frontend Developer", "UI/UX Designer", "JavaScript Learner", "Problem Solver"];
