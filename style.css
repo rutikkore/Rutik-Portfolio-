@@ -34,8 +34,10 @@ body{
 }
 
 body.menu-open{
-  overflow:hidden;
+  overflow: hidden;
+  height: 100vh;
 }
+
 
 img{
   max-width:100%;
@@ -49,7 +51,7 @@ a{
 
 .container{
   width: 100%;
-  padding-left: clamp(16px, 4vw, 70px);
+  padding-left: clamp(26px, 4vw, 70px);
   padding-right: clamp(16px, 4vw, 70px);
 }
 
@@ -807,7 +809,7 @@ a{
 
   .nav-links{
     position: fixed;
-    top: 66px;
+    top: 60px;
     right: 0;
 
     width: 82%;
@@ -861,3 +863,49 @@ a{
     height: 230px;
   }
 }
+@media(max-width: 480px){
+  .hero-title{
+    font-size: clamp(1.8rem, 5vw, 2.4rem);
+  }
+  .hero-role{
+    font-size: clamp(1rem, 3vw, 1.4rem);
+  }
+}
+@media(max-width: 800px){
+
+  .nav-right{
+    position: relative;
+    z-index: 2000;
+  }
+
+  .hamburger{
+    display: block;
+    position: fixed;   /* ✅ always stay in top-right */
+    top: 1px;
+    right: 10px;
+    z-index: 3000;
+    width: 44px;
+    height: 44px;
+
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.14);
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+
+    padding: 10px;
+  }
+
+  .hamburger span{
+    width: 18px;
+    height: 2px;
+    margin: 4px auto;
+  }
+}
+@media(max-width: 400px){
+  .hero-desc{
+    font-size: 0.95rem;
+    padding: 0 8px;
+  }
+}
+
