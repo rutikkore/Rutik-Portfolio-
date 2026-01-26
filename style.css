@@ -908,4 +908,17 @@ a{
     padding: 0 8px;
   }
 }
+/* ✅ Center Send Message Button in Contact Form */
+.contact-form button{
+  display: block;
+  margin: 18px auto 0;   /* ✅ top auto center */
+  padding: 12px 26px;    /* ✅ little wider for premium look */
+}
+/* ✅ Center Send Message Button in Contact Form */
+.contact-form button{
+  display: block;
+  margin: 18px auto 0;   /* ✅ top auto center */
+  padding: 12px 26px;    /* ✅ little wider for premium look */
+}
+
 

@@ -235,3 +235,45 @@ projectCards.forEach((card) => {
 
 /* ✅ Dynamic Year */
 document.getElementById("year").textContent = new Date().getFullYear();
+
+/* ✅ EMAILJS CONTACT FORM WORKING */
+(function () {
+  emailjs.init("bjgzGjzTp3k2DkbWI"); // ✅ paste your Public Key here
+})();
+
+const contactForm = document.getElementById("contactForm");
+const formNote = document.getElementById("formNote");
+const sendBtn = document.getElementById("sendBtn");
+
+contactForm.addEventListener("submit", function (e) {
+  e.preventDefault();
+
+  sendBtn.innerText = "Sending...";
+  sendBtn.disabled = true;
+
+  const params = {
+    name: document.getElementById("name").value,
+    email: document.getElementById("email").value,
+    message: document.getElementById("message").value,
+  };
+
+  emailjs
+    .send("service_6v72yzo", "template_vjuwsnk", params)
+    .then(() => {
+      formNote.style.color = "lightgreen";
+      formNote.innerText = "✅ Message sent successfully!";
+      contactForm.reset();
+
+      sendBtn.innerText = "Send Message";
+      sendBtn.disabled = false;
+    })
+    .catch((error) => {
+      formNote.style.color = "tomato";
+      formNote.innerText = "❌ Failed to send message. Try again.";
+      console.error("EmailJS Error:", error);
+
+      sendBtn.innerText = "Send Message";
+      sendBtn.disabled = false;
+    });
+});
+
