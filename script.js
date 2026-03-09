@@ -65,7 +65,7 @@ function revealOnScroll() {
     const top = el.getBoundingClientRect().top;
     const windowHeight = window.innerHeight;
 
-    if (top < windowHeight - 80) el.classList.add("show");
+    if (top < windowHeight - 120) el.classList.add("show");
   });
 }
 window.addEventListener("scroll", revealOnScroll);
@@ -208,6 +208,30 @@ function setActiveNav() {
 window.addEventListener("scroll", setActiveNav);
 window.addEventListener("load", setActiveNav);
 
+/* ✅ Profile Card 3D Tilt (Premium) */
+const premiumProfile = document.querySelector(".profile-card-premium");
+if (premiumProfile) {
+  const inner = premiumProfile.querySelector(".card-inner");
+
+  premiumProfile.addEventListener("mousemove", (e) => {
+    const rect = premiumProfile.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+
+    const rotateX = ((y - centerY) / 20) * -1;
+    const rotateY = (x - centerX) / 20;
+
+    inner.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+  });
+
+  premiumProfile.addEventListener("mouseleave", () => {
+    inner.style.transform = "rotateX(0deg) rotateY(0deg)";
+  });
+}
+
 /* ✅ Project Card 3D Tilt (desktop only) */
 const projectCards = document.querySelectorAll(".project-card");
 
@@ -277,3 +301,61 @@ contactForm.addEventListener("submit", function (e) {
     });
 });
 
+
+/* ✅ PREMIUM WOW FACTORS: Mouse Follower & Magnetic Buttons */
+const cursor = document.querySelector(".cursor-follower");
+
+// 1. Mouse Follower Logic
+let mouseX = 0, mouseY = 0;
+let cursorX = 0, cursorY = 0;
+
+document.addEventListener("mousemove", (e) => {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
+});
+
+function animateCursor() {
+  // Smoothly interpolate cursor position (Lerp)
+  cursorX += (mouseX - cursorX) * 0.15;
+  cursorY += (mouseY - cursorY) * 0.15;
+
+  if (cursor) {
+    cursor.style.left = `${cursorX}px`;
+    cursor.style.top = `${cursorY}px`;
+  }
+
+  requestAnimationFrame(animateCursor);
+}
+animateCursor();
+
+// 2. Magnetic Buttons Logic
+const magneticBtns = document.querySelectorAll(".btn-magnetic");
+
+magneticBtns.forEach((btn) => {
+  btn.addEventListener("mousemove", (e) => {
+    const bound = btn.getBoundingClientRect();
+    const x = e.clientX - bound.left - bound.width / 2;
+    const y = e.clientY - bound.top - bound.height / 2;
+
+    // Movement intensity
+    btn.style.transform = `translate(${x * 0.3}px, ${y * 0.4}px)`;
+    if (cursor) cursor.classList.add("active");
+  });
+
+  btn.addEventListener("mouseleave", () => {
+    btn.style.transform = `translate(0px, 0px)`;
+    if (cursor) cursor.classList.remove("active");
+  });
+});
+
+
+// 4. Cursor Hover States for links
+const allLinks = document.querySelectorAll("a, button");
+allLinks.forEach(link => {
+  link.addEventListener("mouseenter", () => {
+    if (cursor) cursor.classList.add("active");
+  });
+  link.addEventListener("mouseleave", () => {
+    if (cursor) cursor.classList.remove("active");
+  });
+});

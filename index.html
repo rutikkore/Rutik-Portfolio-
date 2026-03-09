@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <!-- Basic Meta -->
   <meta charset="UTF-8" />
@@ -8,7 +9,7 @@
   <title>Rutik Kore | Portfolio</title>
 
   <!-- CSS -->
-  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="style.css" />
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,8 +19,26 @@
 
 <body>
 
+  <!-- ✅ Custom Cursor Follower -->
+  <div class="cursor-follower"></div>
+
+  <!-- ✅ Grain Texture Overlay -->
+  <div class="grain-overlay"></div>
+
   <!-- ✅ Scroll Progress Bar -->
   <div class="scroll-progress" id="scrollProgress"></div>
+
+  <!-- ✅ Premium Mesh Background -->
+  <div class="mesh-gradient">
+    <div class="mesh-ball"
+      style="width: 400px; height: 400px; background: rgba(139, 92, 246, 0.2); top: -100px; left: -100px;"></div>
+    <div class="mesh-ball"
+      style="width: 500px; height: 500px; background: rgba(6, 182, 212, 0.15); bottom: -150px; right: -150px; animation-delay: -5s;">
+    </div>
+    <div class="mesh-ball"
+      style="width: 300px; height: 300px; background: rgba(244, 63, 94, 0.1); top: 40%; left: 60%; animation-delay: -10s;">
+    </div>
+  </div>
 
   <!-- ✅ SAAS STYLE NAVBAR -->
   <header class="navbar" id="navbar">
@@ -54,16 +73,18 @@
       <!-- RIGHT -->
       <div class="nav-right">
         <div class="nav-icons">
-          <a class="icon-btn" href="https://github.com/rutikkore" target="_blank" aria-label="GitHub">
-            <img src="assets/icons/github.png" alt="GitHub"/>
+          <a class="icon-btn btn-magnetic" href="https://github.com/rutikkore" target="_blank" aria-label="GitHub">
+            <img src="assets/icons/github.png" alt="GitHub" />
           </a>
 
-          <a class="icon-btn" href="https://linkedin.com/in/rutik-kore-700a45289" target="_blank" aria-label="LinkedIn">
-            <img src="assets/icons/linkedin.png" alt="LinkedIn"/>
+          <a class="icon-btn btn-magnetic" href="https://linkedin.com/in/rutik-kore-700a45289" target="_blank"
+            aria-label="LinkedIn">
+            <img src="assets/icons/linkedin.png" alt="LinkedIn" />
           </a>
 
-          <a class="icon-btn" href="https://instagram.com/rutik_kore" target="_blank" aria-label="Instagram">
-            <img src="assets/icons/instagram.png" alt="Instagram"/>
+          <a class="icon-btn btn-magnetic" href="https://instagram.com/rutik_kore" target="_blank"
+            aria-label="Instagram">
+            <img src="assets/icons/instagram.png" alt="Instagram" />
           </a>
         </div>
 
@@ -83,11 +104,17 @@
   <main id="home" class="hero">
     <div class="container hero-grid">
 
-      <section class="hero-left reveal">
-        <p class="badge">👋 Hello, I’m</p>
+      <div class="hero-content reveal">
+        <div class="badge-wrapper">
+          <span class="badge">👋 Hello, I’m</span>
+          <span class="available-badge">
+            <span class="status-dot"></span>
+            Available for Work
+          </span>
+        </div>
 
         <h1 class="hero-title">
-          Rutik <span class="gradient-text"> Kore</span>
+          Rutik <span class="gradient-text glow-pulse">Kore</span>
         </h1>
 
         <h2 class="hero-role">
@@ -97,27 +124,36 @@
         </h2>
 
         <p class="hero-desc">
-          A friendly and growth-minded developer who loves building modern websites,
-          solving problems, and learning new technologies every day.
+          A friendly and growth-minded developer specializing in building
+          <span class="highlight">premium web experiences</span> with a focus on
+          modern UI/UX and seamless interactions.
         </p>
 
         <div class="hero-buttons">
-          <a class="btn primary" href="assets/Rutik Resume.pdf" download>Download Resume</a>
-          <a class="btn secondary" href="#contact">Contact Me</a>
+          <a class="btn primary btn-magnetic" href="assets/Rutik Resume.pdf" download>
+            <span>Download Resume</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
+            </svg>
+          </a>
+          <a class="btn secondary btn-magnetic" href="#contact">Contact Me</a>
         </div>
-      </section>
+      </div>
 
-      <section class="hero-right reveal">
-        <div class="profile-card floating">
-          <div class="profile-glow"></div>
-          <img src="assets/images/rutik-image.jpeg" alt="Rutik" class="profile-img">
+      <div class="hero-visual reveal">
+        <div class="profile-card-premium floating">
+          <div class="card-glow"></div>
+          <div class="card-inner">
+            <img src="assets/images/rutik-image.jpeg" alt="Rutik" class="profile-img">
+          </div>
+          <div class="floating-icon icon-1">⚡</div>
+          <div class="floating-icon icon-2">🎨</div>
+          <div class="floating-icon icon-3">💻</div>
         </div>
-      </section>
+      </div>
 
     </div>
 
-    <div class="blob blob1"></div>
-    <div class="blob blob2"></div>
   </main>
 
 
@@ -131,23 +167,32 @@
         </p>
       </div>
 
-      <div class="glass-card reveal">
-        <h3>Who I am</h3>
-        <p>
-          I’m Rutik Kore, a second-year student and aspiring frontend developer.
-          I enjoy making clean and modern websites with smooth animations.
-        </p>
+      <div class="grid-3 reveal" data-stagger="true">
+        <div class="glass-card stagger-item">
+          <div class="card-icon">👤</div>
+          <h3>Who I am</h3>
+          <p>
+            I’m Rutik Kore, a second-year student and aspiring frontend developer.
+            I enjoy making clean and modern websites with smooth animations.
+          </p>
+        </div>
 
-        <h3>My background</h3>
-        <p>
-          I work on web development projects, UI design tasks, and continuously improve my JavaScript skills.
-          I love learning and growing daily.
-        </p>
+        <div class="glass-card stagger-item">
+          <div class="card-icon">🎓</div>
+          <h3>My background</h3>
+          <p>
+            I work on web development projects, UI design tasks, and continuously improve my JavaScript skills.
+            I love learning and growing daily.
+          </p>
+        </div>
 
-        <h3>What I’m passionate about</h3>
-        <p>
-          Frontend development, UI/UX, animations, and creating real-world useful web applications.
-        </p>
+        <div class="glass-card stagger-item">
+          <div class="card-icon">🔥</div>
+          <h3>My Passion</h3>
+          <p>
+            Frontend development, UI/UX, animations, and creating real-world useful web applications.
+          </p>
+        </div>
       </div>
     </div>
   </section>
@@ -161,27 +206,58 @@
         <p class="section-subtitle">My internship and practical learning experiences.</p>
       </div>
 
-      <div class="grid-3" data-stagger="true">
-        <article class="card reveal">
-          <h3>Kaahmuchee Solutions Pvt. Ltd.</h3>
-          <p class="muted">Frontend Developer Intern</p>
-          <p class="tag">OCT 2025 – JAN 2026</p>
-          <p>Worked on responsive UI components and improved page layout.</p>
-        </article>
+      <div class="experience-timeline reveal" data-stagger="true">
+        <div class="experience-item stagger-item">
+          <div class="exp-dot"></div>
+          <div class="exp-content glass-card">
+            <div class="exp-header">
+              <h3>Kaahmuchee Solutions Pvt. Ltd.</h3>
+              <span class="tag">OCT 2025 – JAN 2026</span>
+            </div>
+            <p class="role">Frontend Developer Intern</p>
+            <p class="desc">Worked on responsive UI components and improved page layout.</p>
+            <div class="tech-stack">
+              <span>HTML5</span>
+              <span>CSS3</span>
+              <span>JavaScript</span>
+              <span>UI/UX</span>
+            </div>
+          </div>
+        </div>
 
-        <article class="card reveal">
-          <h3>Company Name</h3>
-          <p class="muted">Web Development Intern</p>
-          <p class="tag">Jan 2025 – Mar 2025</p>
-          <p>Created web pages and supported frontend updates & animations.</p>
-        </article>
+        <div class="experience-item stagger-item">
+          <div class="exp-dot"></div>
+          <div class="exp-content glass-card">
+            <div class="exp-header">
+              <h3>Company Name</h3>
+              <span class="tag">Jun 2025 – Mar 2025</span>
+            </div>
+            <p class="role">Web Development Intern</p>
+            <p class="desc">Created web pages and supported frontend updates & animations.</p>
+            <div class="tech-stack">
+              <span>Frontend</span>
+              <span>Animations</span>
+              <span>Web Dev</span>
+            </div>
+          </div>
+        </div>
 
-        <article class="card reveal">
-          <h3>Freelance / Personal</h3>
-          <p class="muted">Frontend Projects</p>
-          <p class="tag">2024 – Present</p>
-          <p>Built portfolio websites, landing pages, and mini projects.</p>
-        </article>
+        <div class="experience-item stagger-item">
+          <div class="exp-dot"></div>
+          <div class="exp-content glass-card">
+            <div class="exp-header">
+              <h3>Freelance / Personal</h3>
+              <span class="tag">2024 – Present</span>
+            </div>
+            <p class="role">Frontend Projects</p>
+            <p class="desc">Built portfolio websites, landing pages, and mini projects.</p>
+            <div class="tech-stack">
+              <span>Side Projects</span>
+              <span>Freelance</span>
+              <span>Vite</span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -293,16 +369,19 @@
         <article class="project-card reveal">
           <div class="project-img">
             <img src="assets/images/Beach Cleaner.jpeg" alt="Project 1">
-            <div class="project-overlay"><p>Modern UI • Responsive</p></div>
+            <div class="project-overlay">
+              <p>Modern UI • Responsive</p>
+            </div>
           </div>
           <div class="project-content">
             <h3>RC Beach Cleaner</h3>
-            <p>Recognized for developing an innovative and impactful hardware project that demonstrated strong technical execution, creativity, and societal relevance, standing out among top engineering talents.</p>
+            <p>Recognized for developing an innovative and impactful hardware project that demonstrated strong technical
+              execution, creativity, and societal relevance, standing out among top engineering talents.</p>
             <p class="tech-stack"><span>Hardware</span></p>
             <div class="project-buttons">
               <a class="btn small secondary" href="assets/videos/beach-cleaner.mp4" target="_blank">
-        Watch Demo Video
-      </a>
+                Watch Demo Video
+              </a>
             </div>
           </div>
         </article>
@@ -310,15 +389,20 @@
         <article class="project-card reveal">
           <div class="project-img">
             <img src="assets/images/carbon footprint tracker.jpeg" alt="Project 2">
-            <div class="project-overlay"><p>Clean UI • Fast</p></div>
+            <div class="project-overlay">
+              <p>Clean UI • Fast</p>
+            </div>
           </div>
           <div class="project-content">
             <h3>Carbon Footprint Tracker</h3>
-            <p>A comprehensive web application to help users calculate, track, and reduce their daily carbon emissions through gamification and data visualization.</p>
+            <p>A comprehensive web application to help users calculate, track, and reduce their daily carbon emissions
+              through gamification and data visualization.</p>
             <p class="tech-stack"><span>HTML</span><span>CSS</span><span>JS</span></p>
             <div class="project-buttons">
-              <a class="btn small" href="https://github.com/rutikkore/Carbon-Footprint-Tracker" target="_blank">GitHub</a>
-              <a class="btn small secondary" href="https://carbon-footprint-tracker-cphv.vercel.app/" target="_blank">Live Demo</a>
+              <a class="btn small" href="https://github.com/rutikkore/Carbon-Footprint-Tracker"
+                target="_blank">GitHub</a>
+              <a class="btn small secondary" href="https://carbon-footprint-tracker-cphv.vercel.app/"
+                target="_blank">Live Demo</a>
             </div>
           </div>
         </article>
@@ -326,7 +410,9 @@
         <article class="project-card reveal">
           <div class="project-img">
             <img src="assets/images/project3.jpg" alt="Project 3">
-            <div class="project-overlay"><p>UI/UX • Landing Page</p></div>
+            <div class="project-overlay">
+              <p>UI/UX • Landing Page</p>
+            </div>
           </div>
           <div class="project-content">
             <h3>Landing Page</h3>
@@ -414,30 +500,26 @@
         <p class="section-subtitle">Let’s connect.</p>
       </div>
 
-     <div class="socials-grid reveal" data-stagger="true">
+      <div class="socials-grid reveal" data-stagger="true">
 
-  <a class="social-icon reveal"
-     href="https://github.com/rutikkore"
-     target="_blank" rel="noopener noreferrer">
-    <img src="assets/icons/github.png" alt="GitHub">
-    <span>GitHub</span>
-  </a>
+        <a class="social-icon reveal" href="https://github.com/rutikkore" target="_blank" rel="noopener noreferrer">
+          <img src="assets/icons/github.png" alt="GitHub">
+          <span>GitHub</span>
+        </a>
 
-  <a class="social-icon reveal"
-     href="https://www.linkedin.com/in/rutik-kore-8903ba317/"
-     target="_blank" rel="noopener noreferrer">
-    <img src="assets/icons/linkedin.png" alt="LinkedIn">
-    <span>LinkedIn</span>
-  </a>
+        <a class="social-icon reveal" href="https://www.linkedin.com/in/rutik-kore-8903ba317/" target="_blank"
+          rel="noopener noreferrer">
+          <img src="assets/icons/linkedin.png" alt="LinkedIn">
+          <span>LinkedIn</span>
+        </a>
 
-  <a class="social-icon reveal"
-     href="https://www.instagram.com/rutikk_kore?igsh=MTgweWRhZ2VuMTM4bA=="
-     target="_blank" rel="noopener noreferrer">
-    <img src="assets/icons/instagram.png" alt="Instagram">
-    <span>Instagram</span>
-  </a>
+        <a class="social-icon reveal" href="https://www.instagram.com/rutikk_kore?igsh=MTgweWRhZ2VuMTM4bA=="
+          target="_blank" rel="noopener noreferrer">
+          <img src="assets/icons/instagram.png" alt="Instagram">
+          <span>Instagram</span>
+        </a>
 
-</div>
+      </div>
 
     </div>
   </section>
@@ -461,21 +543,21 @@
         </div>
 
         <form class="glass-card reveal contact-form" id="contactForm">
-  <h3>Send a Message</h3>
+          <h3>Send a Message</h3>
 
-  <label>Name</label>
-  <input type="text" id="name" placeholder="Your Name" required>
+          <label>Name</label>
+          <input type="text" id="name" placeholder="Your Name" required>
 
-  <label>Email</label>
-  <input type="email" id="email" placeholder="Your Email" required>
+          <label>Email</label>
+          <input type="email" id="email" placeholder="Your Email" required>
 
-  <label>Message</label>
-  <textarea id="message" rows="5" placeholder="Your Message..." required></textarea>
+          <label>Message</label>
+          <textarea id="message" rows="5" placeholder="Your Message..." required></textarea>
 
-  <button class="btn primary" type="submit" id="sendBtn">Send Message</button>
+          <button class="btn primary" type="submit" id="sendBtn">Send Message</button>
 
-  <p class="form-note" id="formNote"></p>
-</form>
+          <p class="form-note" id="formNote"></p>
+        </form>
 
       </div>
 
@@ -486,6 +568,7 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
-<script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
+
 </html>
