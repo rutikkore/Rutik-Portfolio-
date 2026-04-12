@@ -208,12 +208,23 @@ function setActiveNav() {
 window.addEventListener("scroll", setActiveNav);
 window.addEventListener("load", setActiveNav);
 
-/* ✅ Profile Card 3D Tilt (Premium) */
+/* ✅ Profile Card 3D Tilt & Idle Animation (Premium) */
 const premiumProfile = document.querySelector(".profile-card-premium");
 if (premiumProfile) {
   const inner = premiumProfile.querySelector(".card-inner");
+  const glow = premiumProfile.querySelector(".card-glow");
+  
+  let isHovered = false;
+  let targetRotateX = 0;
+  let targetRotateY = 0;
+  let currentRotateX = 0;
+  let currentRotateY = 0;
+  let currentScale = 1.0;
+  let targetScale = 1.05; // Base resting scale
+  let time = 0;
 
   premiumProfile.addEventListener("mousemove", (e) => {
+    isHovered = true;
     const rect = premiumProfile.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -221,16 +232,71 @@ if (premiumProfile) {
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
 
-    const rotateX = ((y - centerY) / 20) * -1;
-    const rotateY = (x - centerX) / 20;
-
-    inner.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+    // Max rotation 6-8 degrees
+    targetRotateX = ((y - centerY) / centerY) * -7;
+    targetRotateY = ((x - centerX) / centerX) * 7;
+    targetScale = 1.08; // Slight scale increase on hover
+    
+    if (glow) {
+      glow.style.transform = `scale(1.1) translate(${targetRotateY * 2}px, ${-targetRotateX * 2}px)`;
+      glow.style.opacity = "0.8";
+      glow.style.animationPlayState = "paused";
+    }
   });
 
   premiumProfile.addEventListener("mouseleave", () => {
-    inner.style.transform = "rotateX(0deg) rotateY(0deg)";
+    isHovered = false;
+    targetRotateX = 0;
+    targetRotateY = 0;
+    targetScale = 1.05;
+    
+    if (glow) {
+      glow.style.transform = `scale(1) translate(0px, 0px)`;
+      glow.style.opacity = "0.5";
+      glow.style.animationPlayState = "running";
+    }
   });
+
+  function smoothRender() {
+    time += 0.02;
+    
+    // Smooth Lerp for Transform
+    currentRotateX += (targetRotateX - currentRotateX) * 0.1;
+    currentRotateY += (targetRotateY - currentRotateY) * 0.1;
+    currentScale += (targetScale - currentScale) * 0.1;
+
+    let floatY = 0;
+    let breatheScale = 0;
+    
+    // Idle Animation details
+    if (!isHovered) {
+      floatY = Math.sin(time * 1.5) * 8; // Gentle floating 8px up and down
+      breatheScale = Math.sin(time) * 0.01; // Slow breathing scale effect
+    }
+
+    const finalScale = currentScale + breatheScale;
+    
+    // Apply combined transforms gracefully
+    inner.style.transform = `perspective(1000px) rotateX(${currentRotateX}deg) rotateY(${currentRotateY}deg) translateY(${floatY}px) scale(${finalScale})`;
+    
+    requestAnimationFrame(smoothRender);
+  }
+  
+  smoothRender();
 }
+
+/* ✅ Parallax Depth */
+window.addEventListener("scroll", () => {
+  const scrolled = window.scrollY;
+  const mesh = document.querySelector(".mesh-gradient");
+  if (mesh) {
+    mesh.style.transform = `translateY(${scrolled * 0.15}px)`;
+  }
+  const particles = document.querySelector(".hero-particles");
+  if (particles) {
+    particles.style.transform = `translateY(${scrolled * 0.08}px)`; // background moves slightly slower
+  }
+});
 
 /* ✅ Project Card 3D Tilt (desktop only) */
 const projectCards = document.querySelectorAll(".project-card");

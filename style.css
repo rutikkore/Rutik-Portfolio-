@@ -1120,6 +1120,68 @@ a {
   filter: blur(20px);
   z-index: -1;
   opacity: 0.5;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.animated-glow {
+  animation: glowPulseSoft 4s infinite alternate ease-in-out;
+}
+
+@keyframes glowPulseSoft {
+  0% { transform: scale(0.95); opacity: 0.4; }
+  100% { transform: scale(1.05); opacity: 0.6; }
+}
+
+.hero-visual-container {
+  position: relative;
+}
+
+.hero-particles {
+  position: absolute;
+  inset: -50px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: var(--primary);
+  border-radius: 50%;
+  opacity: 0.3;
+  box-shadow: 0 0 10px var(--primary);
+  animation: floatParticle 8s infinite ease-in-out alternate;
+}
+
+.particle.p1 { top: 10%; left: 20%; animation-delay: 0s; width: 6px; height: 6px; }
+.particle.p2 { top: 70%; left: 10%; animation-delay: -1s; }
+.particle.p3 { top: 40%; right: 10%; animation-delay: -2s; background: var(--secondary); box-shadow: 0 0 10px var(--secondary); }
+.particle.p4 { top: 80%; right: 25%; animation-delay: -3s; width: 5px; height: 5px;}
+.particle.p5 { top: 20%; right: 30%; animation-delay: -4s; }
+.particle.p6 { top: 50%; left: -10%; animation-delay: -1.5s; width: 7px; height: 7px; background: var(--secondary); box-shadow: 0 0 12px var(--secondary); }
+
+@keyframes floatParticle {
+  0% { transform: translateY(0) scale(1); opacity: 0.2; }
+  100% { transform: translateY(-20px) scale(1.5); opacity: 0.6; }
+}
+
+.hero-image-anim {
+  opacity: 0;
+  animation: heroImgEntrance 1.2s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes heroImgEntrance {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+    filter: blur(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0px);
+  }
 }
 
 .profile-img {
