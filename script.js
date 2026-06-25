@@ -1,427 +1,373 @@
-/* ==========================================================
-   ✅ FINAL WORKING PORTFOLIO JS (UPGRADED)
-   - SaaS navbar + scroll shadow
-   - Mobile sidebar fixed (overlay)
-   - Smooth scroll + header offset
-   - Scroll restoration off
-   - Typing effect
-   - Reveal + stagger animations
-   - Active navbar highlight
-   - Scroll progress bar
-   - 3D tilt on projects
-   ========================================================== */
+/* ==========================================================================
+   PREMIUM PORTFOLIO INTERACTION ENGINE
+   - Lenis Smooth Scroll
+   - GSAP & ScrollTrigger Choreography
+   - Custom Follower Cursor & Spotlight Parallax
+   - Magnetic Web Elements
+   - EmailJS Submission Form
+   ========================================================================== */
 
-// ✅ Always start from top on refresh/reload
-if ("scrollRestoration" in history) {
-  history.scrollRestoration = "manual";
+// 1. Scroll Restoration
+if ('scrollRestoration' in history) {
+  history.scrollRestoration = 'manual';
 }
-window.addEventListener("load", () => {
+window.addEventListener('load', () => {
   window.scrollTo(0, 0);
 });
 
-/* ✅ Typing Effect */
-const roles = ["Frontend Developer", "UI/UX Designer", "JavaScript Learner", "Problem Solver"];
-let roleIndex = 0;
-let charIndex = 0;
-let isDeleting = false;
-
-const typingSpeed = 90;
-const deletingSpeed = 50;
-const pauseTime = 900;
-
-const typingText = document.getElementById("typingText");
-
-function typeEffect() {
-  const currentRole = roles[roleIndex];
-
-  if (!isDeleting) {
-    typingText.textContent = currentRole.substring(0, charIndex + 1);
-    charIndex++;
-
-    if (charIndex === currentRole.length) {
-      isDeleting = true;
-      setTimeout(typeEffect, pauseTime);
-      return;
-    }
-  } else {
-    typingText.textContent = currentRole.substring(0, charIndex - 1);
-    charIndex--;
-
-    if (charIndex === 0) {
-      isDeleting = false;
-      roleIndex = (roleIndex + 1) % roles.length;
-    }
-  }
-
-  setTimeout(typeEffect, isDeleting ? deletingSpeed : typingSpeed);
-}
-typeEffect();
-
-/* ✅ Reveal Animation */
-const revealElements = document.querySelectorAll(".reveal");
-
-function revealOnScroll() {
-  revealElements.forEach((el) => {
-    const top = el.getBoundingClientRect().top;
-    const windowHeight = window.innerHeight;
-
-    if (top < windowHeight - 120) el.classList.add("show");
-  });
-}
-window.addEventListener("scroll", revealOnScroll);
-window.addEventListener("load", revealOnScroll);
-
-/* ✅ Stagger Animation */
-const staggerContainers = document.querySelectorAll("[data-stagger='true']");
-
-function handleStaggerReveal() {
-  staggerContainers.forEach((container) => {
-    const children = Array.from(container.children);
-    const containerTop = container.getBoundingClientRect().top;
-    const windowHeight = window.innerHeight;
-
-    if (containerTop < windowHeight - 80) {
-      children.forEach((child, index) => {
-        child.classList.add("stagger-item");
-        setTimeout(() => child.classList.add("show"), index * 120);
-      });
-    }
-  });
-}
-window.addEventListener("scroll", handleStaggerReveal);
-window.addEventListener("load", handleStaggerReveal);
-
-/* ✅ Skills Bar Fill */
-const skillFills = document.querySelectorAll(".skill-fill");
-
-function fillSkills() {
-  skillFills.forEach((bar) => {
-    const barTop = bar.getBoundingClientRect().top;
-    const windowHeight = window.innerHeight;
-
-    if (barTop < windowHeight - 80) {
-      const percent = bar.getAttribute("data-fill");
-      bar.style.width = percent + "%";
-    }
-  });
-}
-window.addEventListener("scroll", fillSkills);
-window.addEventListener("load", fillSkills);
-
-/* ✅ Scroll Progress */
-const scrollProgress = document.getElementById("scrollProgress");
-
-function updateProgressBar() {
-  const scrollTop = window.scrollY;
-  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-  const progress = (scrollTop / docHeight) * 100;
-  scrollProgress.style.width = progress + "%";
-}
-window.addEventListener("scroll", updateProgressBar);
-window.addEventListener("load", updateProgressBar);
-
-/* ✅ SaaS Navbar shadow on scroll */
-const navbar = document.getElementById("navbar");
-
-window.addEventListener("scroll", () => {
-  if (window.scrollY > 30) navbar.classList.add("scrolled");
-  else navbar.classList.remove("scrolled");
+// 2. Lenis Smooth Scroll Initialization
+const lenis = new Lenis({
+  duration: 1.2,
+  easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // smooth easeOutExpo
+  direction: 'vertical',
+  gestureDirection: 'vertical',
+  smooth: true,
+  mouseMultiplier: 1,
+  smoothTouch: false,
+  touchMultiplier: 2,
+  infinite: false,
 });
 
-/* ✅ Mobile Sidebar */
-const hamburgerBtn = document.getElementById("hamburgerBtn");
-const navLinks = document.getElementById("navLinks");
 
-const overlay = document.createElement("div");
-overlay.className = "mobile-overlay";
-document.body.appendChild(overlay);
-
-function openMenu() {
-  navLinks.classList.add("active");
-  overlay.classList.add("active");
-  document.body.classList.add("menu-open");
-}
-
-function closeMenu() {
-  navLinks.classList.remove("active");
-  overlay.classList.remove("active");
-  document.body.classList.remove("menu-open");
-}
-
-hamburgerBtn.addEventListener("click", () => {
-  if (navLinks.classList.contains("active")) closeMenu();
-  else openMenu();
+// Connect ScrollTrigger to Lenis update cycle
+lenis.on('scroll', ScrollTrigger.update);
+gsap.ticker.add((time) => {
+  lenis.raf(time * 1000);
 });
+gsap.ticker.lagSmoothing(0);
 
-overlay.addEventListener("click", closeMenu);
-
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape") closeMenu();
-});
-
-/* ✅ Smooth scroll with header offset */
-document.querySelectorAll(".nav-links a").forEach((link) => {
-  link.addEventListener("click", (e) => {
-    const targetID = link.getAttribute("href");
-
-    if (targetID.startsWith("#")) {
-      e.preventDefault();
-
-      const target = document.querySelector(targetID);
-      const headerHeight = document.querySelector(".navbar").offsetHeight;
-
-      closeMenu();
-
-      const pos = target.offsetTop - headerHeight + 8;
-
-      window.scrollTo({
-        top: pos,
-        behavior: "smooth"
-      });
-    }
-  });
-});
-
-/* ✅ Active nav highlight on scroll */
-const sections = document.querySelectorAll("main, section, footer");
-const navItems = document.querySelectorAll(".nav-links a");
-
-function setActiveNav() {
-  let current = "";
-
-  sections.forEach((section) => {
-    const sectionTop = section.offsetTop;
-    const scrollY = window.scrollY;
-
-    if (scrollY >= sectionTop - 140) {
-      current = section.getAttribute("id");
-    }
-  });
-
-  navItems.forEach((link) => {
-    link.classList.remove("active");
-    if (link.getAttribute("href") === `#${current}`) {
-      link.classList.add("active");
-    }
-  });
-}
-window.addEventListener("scroll", setActiveNav);
-window.addEventListener("load", setActiveNav);
-
-/* ✅ Profile Card 3D Tilt & Idle Animation (Premium) */
-const premiumProfile = document.querySelector(".profile-card-premium");
-if (premiumProfile) {
-  const inner = premiumProfile.querySelector(".card-inner");
-  const glow = premiumProfile.querySelector(".card-glow");
-  
-  let isHovered = false;
-  let targetRotateX = 0;
-  let targetRotateY = 0;
-  let currentRotateX = 0;
-  let currentRotateY = 0;
-  let currentScale = 1.0;
-  let targetScale = 1.05; // Base resting scale
-  let time = 0;
-
-  premiumProfile.addEventListener("mousemove", (e) => {
-    isHovered = true;
-    const rect = premiumProfile.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-
-    // Max rotation 6-8 degrees
-    targetRotateX = ((y - centerY) / centerY) * -7;
-    targetRotateY = ((x - centerX) / centerX) * 7;
-    targetScale = 1.08; // Slight scale increase on hover
-    
-    if (glow) {
-      glow.style.transform = `scale(1.1) translate(${targetRotateY * 2}px, ${-targetRotateX * 2}px)`;
-      glow.style.opacity = "0.8";
-      glow.style.animationPlayState = "paused";
-    }
-  });
-
-  premiumProfile.addEventListener("mouseleave", () => {
-    isHovered = false;
-    targetRotateX = 0;
-    targetRotateY = 0;
-    targetScale = 1.05;
-    
-    if (glow) {
-      glow.style.transform = `scale(1) translate(0px, 0px)`;
-      glow.style.opacity = "0.5";
-      glow.style.animationPlayState = "running";
-    }
-  });
-
-  function smoothRender() {
-    time += 0.02;
-    
-    // Smooth Lerp for Transform
-    currentRotateX += (targetRotateX - currentRotateX) * 0.1;
-    currentRotateY += (targetRotateY - currentRotateY) * 0.1;
-    currentScale += (targetScale - currentScale) * 0.1;
-
-    let floatY = 0;
-    let breatheScale = 0;
-    
-    // Idle Animation details
-    if (!isHovered) {
-      floatY = Math.sin(time * 1.5) * 8; // Gentle floating 8px up and down
-      breatheScale = Math.sin(time) * 0.01; // Slow breathing scale effect
-    }
-
-    const finalScale = currentScale + breatheScale;
-    
-    // Apply combined transforms gracefully
-    inner.style.transform = `perspective(1000px) rotateX(${currentRotateX}deg) rotateY(${currentRotateY}deg) translateY(${floatY}px) scale(${finalScale})`;
-    
-    requestAnimationFrame(smoothRender);
-  }
-  
-  smoothRender();
-}
-
-/* ✅ Parallax Depth */
-window.addEventListener("scroll", () => {
-  const scrolled = window.scrollY;
-  const mesh = document.querySelector(".mesh-gradient");
-  if (mesh) {
-    mesh.style.transform = `translateY(${scrolled * 0.15}px)`;
-  }
-  const particles = document.querySelector(".hero-particles");
-  if (particles) {
-    particles.style.transform = `translateY(${scrolled * 0.08}px)`; // background moves slightly slower
-  }
-});
-
-/* ✅ Project Card 3D Tilt (desktop only) */
-const projectCards = document.querySelectorAll(".project-card");
-
-projectCards.forEach((card) => {
-  card.addEventListener("mousemove", (e) => {
-    if (window.innerWidth < 900) return;
-
-    const rect = card.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
-
-    const rotateX = ((y - centerY) / 18) * -1;
-    const rotateY = ((x - centerX) / 18);
-
-    card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-6px)`;
-  });
-
-  card.addEventListener("mouseleave", () => {
-    card.style.transform = "rotateX(0deg) rotateY(0deg)";
-  });
-});
-
-/* ✅ Dynamic Year */
-document.getElementById("year").textContent = new Date().getFullYear();
-
-/* ✅ EMAILJS CONTACT FORM WORKING */
-(function () {
-  emailjs.init("bjgzGjzTp3k2DkbWI"); // ✅ paste your Public Key here
-})();
-
-const contactForm = document.getElementById("contactForm");
-const formNote = document.getElementById("formNote");
-const sendBtn = document.getElementById("sendBtn");
-
-contactForm.addEventListener("submit", function (e) {
-  e.preventDefault();
-
-  sendBtn.innerText = "Sending...";
-  sendBtn.disabled = true;
-
-  const params = {
-    name: document.getElementById("name").value,
-    email: document.getElementById("email").value,
-    message: document.getElementById("message").value,
-  };
-
-  emailjs
-    .send("service_6v72yzo", "template_vjuwsnk", params)
-    .then(() => {
-      formNote.style.color = "lightgreen";
-      formNote.innerText = "✅ Message sent successfully!";
-      contactForm.reset();
-
-      sendBtn.innerText = "Send Message";
-      sendBtn.disabled = false;
-    })
-    .catch((error) => {
-      formNote.style.color = "tomato";
-      formNote.innerText = "❌ Failed to send message. Try again.";
-      console.error("EmailJS Error:", error);
-
-      sendBtn.innerText = "Send Message";
-      sendBtn.disabled = false;
+// 3. Mouse-Responsive Spotlight tracking
+const spotlight = document.getElementById('spotlight');
+document.addEventListener('mousemove', (e) => {
+  if (spotlight) {
+    gsap.to(spotlight, {
+      left: e.clientX,
+      top: e.clientY,
+      duration: 0.8,
+      ease: 'power2.out'
     });
+  }
 });
 
-
-/* ✅ PREMIUM WOW FACTORS: Mouse Follower & Magnetic Buttons */
-const cursor = document.querySelector(".cursor-follower");
-
-// 1. Mouse Follower Logic
+// 4. Custom Follower Cursor Logic
+const cursor = document.getElementById('customCursor');
+const cursorFollower = document.getElementById('customCursorFollower');
 let mouseX = 0, mouseY = 0;
-let cursorX = 0, cursorY = 0;
+let cx = 0, cy = 0;
+let cfx = 0, cfy = 0;
 
-document.addEventListener("mousemove", (e) => {
+document.addEventListener('mousemove', (e) => {
   mouseX = e.clientX;
   mouseY = e.clientY;
 });
 
-function animateCursor() {
-  // Smoothly interpolate cursor position (Lerp)
-  cursorX += (mouseX - cursorX) * 0.15;
-  cursorY += (mouseY - cursorY) * 0.15;
-
+function tickCursor() {
+  cx += (mouseX - cx) * 0.25;
+  cy += (mouseY - cy) * 0.25;
   if (cursor) {
-    cursor.style.left = `${cursorX}px`;
-    cursor.style.top = `${cursorY}px`;
+    cursor.style.left = `${cx}px`;
+    cursor.style.top = `${cy}px`;
   }
 
-  requestAnimationFrame(animateCursor);
+  cfx += (mouseX - cfx) * 0.14;
+  cfy += (mouseY - cfy) * 0.14;
+  if (cursorFollower) {
+    cursorFollower.style.left = `${cfx}px`;
+    cursorFollower.style.top = `${cfy}px`;
+  }
+
+  requestAnimationFrame(tickCursor);
 }
-animateCursor();
+tickCursor();
 
-// 2. Magnetic Buttons Logic
-const magneticBtns = document.querySelectorAll(".btn-magnetic");
-
-magneticBtns.forEach((btn) => {
-  btn.addEventListener("mousemove", (e) => {
-    const bound = btn.getBoundingClientRect();
-    const x = e.clientX - bound.left - bound.width / 2;
-    const y = e.clientY - bound.top - bound.height / 2;
-
-    // Movement intensity
-    btn.style.transform = `translate(${x * 0.3}px, ${y * 0.4}px)`;
-    if (cursor) cursor.classList.add("active");
+// Set Cursor Follower Hover States
+const hoverables = document.querySelectorAll('a, button, input, textarea, .hover-trigger-view');
+hoverables.forEach((el) => {
+  el.addEventListener('mouseenter', () => {
+    if (el.classList.contains('hover-trigger-view')) {
+      cursorFollower.classList.add('view-mode');
+      cursor.classList.add('hovered');
+    } else {
+      cursorFollower.classList.add('hovered');
+      cursor.classList.add('hovered');
+    }
   });
 
-  btn.addEventListener("mouseleave", () => {
-    btn.style.transform = `translate(0px, 0px)`;
-    if (cursor) cursor.classList.remove("active");
+  el.addEventListener('mouseleave', () => {
+    cursorFollower.classList.remove('hovered', 'view-mode');
+    cursor.classList.remove('hovered');
+  });
+});
+
+// 5. Magnetic Buttons Physics Engine
+const magneticElements = document.querySelectorAll('.btn-magnetic');
+magneticElements.forEach((el) => {
+  el.addEventListener('mousemove', (e) => {
+    const rect = el.getBoundingClientRect();
+    const x = e.clientX - rect.left - rect.width / 2;
+    const y = e.clientY - rect.top - rect.height / 2;
+
+    gsap.to(el, {
+      x: x * 0.35,
+      y: y * 0.35,
+      duration: 0.3,
+      ease: 'power2.out'
+    });
+  });
+
+  el.addEventListener('mouseleave', () => {
+    gsap.to(el, {
+      x: 0,
+      y: 0,
+      duration: 0.6,
+      ease: 'elastic.out(1, 0.3)'
+    });
   });
 });
 
+// 6. Mobile Side Navigation Overlay controls
+const hamburgerBtn = document.getElementById('hamburgerBtn');
+const mobileNav = document.getElementById('mobileNav');
+const mobileLinks = document.querySelectorAll('.mobile-link-item');
 
-// 4. Cursor Hover States for links
-const allLinks = document.querySelectorAll("a, button");
-allLinks.forEach(link => {
-  link.addEventListener("mouseenter", () => {
-    if (cursor) cursor.classList.add("active");
-  });
-  link.addEventListener("mouseleave", () => {
-    if (cursor) cursor.classList.remove("active");
+hamburgerBtn.addEventListener('click', () => {
+  mobileNav.classList.toggle('active');
+  hamburgerBtn.classList.toggle('active');
+  const spans = hamburgerBtn.querySelectorAll('span');
+  if (hamburgerBtn.classList.contains('active')) {
+    spans[0].style.transform = 'translateY(7px) rotate(45deg)';
+    spans[1].style.opacity = '0';
+    spans[2].style.transform = 'translateY(-7px) rotate(-45deg)';
+  } else {
+    spans[0].style.transform = 'none';
+    spans[1].style.opacity = '1';
+    spans[2].style.transform = 'none';
+  }
+});
+
+mobileLinks.forEach((link) => {
+  link.addEventListener('click', () => {
+    mobileNav.classList.remove('active');
+    hamburgerBtn.classList.remove('active');
+    const spans = hamburgerBtn.querySelectorAll('span');
+    spans[0].style.transform = 'none';
+    spans[1].style.opacity = '1';
+    spans[2].style.transform = 'none';
   });
 });
+
+// 7. Navigation bar hide/reveal on scroll direction
+let prevScroll = 0;
+const header = document.getElementById('header');
+lenis.on('scroll', (e) => {
+  const currentScroll = e.scroll;
+  if (currentScroll > 150) {
+    if (currentScroll > prevScroll) {
+      header.classList.add('hide');
+    } else {
+      header.classList.remove('hide');
+    }
+  } else {
+    header.classList.remove('hide');
+  }
+  prevScroll = currentScroll;
+});
+
+// Active Navigation Item Highlighter
+const sections = document.querySelectorAll('main, section');
+const navLinks = document.querySelectorAll('.nav-link-item');
+
+lenis.on('scroll', () => {
+  let activeId = "";
+  sections.forEach((section) => {
+    const top = section.offsetTop;
+    if (window.scrollY >= top - 150) {
+      activeId = section.getAttribute('id');
+    }
+  });
+
+  navLinks.forEach((link) => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === `#${activeId}`) {
+      link.classList.add('active');
+    }
+  });
+});
+
+// 8. 3D Mouse Reactive Portrait Parallax
+const portrait = document.getElementById('heroPortrait');
+if (portrait) {
+  const img = portrait.querySelector('img');
+  
+  portrait.addEventListener('mousemove', (e) => {
+    const rect = portrait.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+
+    const rotX = ((y - centerY) / centerY) * -12;
+    const rotY = ((x - centerX) / centerX) * 12;
+
+    gsap.to(img, {
+      rotateX: rotX,
+      rotateY: rotY,
+      scale: 1.05,
+      transformPerspective: 1000,
+      duration: 0.5,
+      ease: 'power2.out'
+    });
+  });
+
+  portrait.addEventListener('mouseleave', () => {
+    gsap.to(img, {
+      rotateX: 0,
+      rotateY: 0,
+      scale: 1,
+      duration: 0.8,
+      ease: 'power2.out'
+    });
+  });
+}
+
+// 9. Marquee speed variation on scroll
+const tickerTrack = document.querySelector('.ticker-track');
+if (tickerTrack) {
+  lenis.on('scroll', (e) => {
+    const speed = Math.abs(e.velocity);
+    const calculatedDuration = Math.max(8, 30 - speed * 1.8);
+    tickerTrack.style.animationDuration = `${calculatedDuration}s`;
+  });
+}
+
+// 10. GSAP ScrollTriggers
+// Browser Mockup image scale-up on enter
+const mockups = document.querySelectorAll('.browser-mockup');
+mockups.forEach((mock) => {
+  gsap.fromTo(mock,
+    { scale: 0.95 },
+    {
+      scale: 1.00,
+      scrollTrigger: {
+        trigger: mock,
+        start: 'top bottom-=80px',
+        end: 'bottom top+=150px',
+        scrub: true,
+      }
+    }
+  );
+});
+
+// Journey timeline line-drawing progress
+const journeyLineProgress = document.getElementById('journeyLineProgress');
+const journeyWrapper = document.querySelector('.journey-wrapper');
+const journeyItems = document.querySelectorAll('.journey-item');
+
+if (journeyWrapper && journeyLineProgress) {
+  gsap.to(journeyLineProgress, {
+    height: '100%',
+    scrollTrigger: {
+      trigger: journeyWrapper,
+      start: 'top center',
+      end: 'bottom center',
+      scrub: true,
+      onUpdate: (self) => {
+        const progress = self.progress;
+        const indexToHighlight = Math.floor(progress * journeyItems.length);
+        journeyItems.forEach((item, index) => {
+          if (index <= indexToHighlight) {
+            item.classList.add('active');
+          } else {
+            item.classList.remove('active');
+          }
+        });
+      }
+    }
+  });
+}
+
+// Content fades & line reveal animations
+const reveals = document.querySelectorAll('.editorial-text, .case-study-details, .mission-block, .reveal-achievement');
+reveals.forEach((element) => {
+  gsap.fromTo(element,
+    { opacity: 0, y: 35 },
+    {
+      opacity: 1,
+      y: 0,
+      duration: 1.1,
+      ease: 'power3.out',
+      scrollTrigger: {
+        trigger: element,
+        start: 'top bottom-=60px',
+        toggleActions: 'play none none none'
+      }
+    }
+  );
+});
+
+// 11. Custom Video Demo playback trigger
+const videoContainer = document.getElementById('videoContainer');
+const videoElement = document.getElementById('beachCleanerVideo');
+const playBtn = document.getElementById('playBtn');
+
+if (videoContainer && videoElement && playBtn) {
+  videoContainer.addEventListener('click', () => {
+    if (videoElement.paused) {
+      videoElement.play();
+      playBtn.style.opacity = '0';
+    } else {
+      videoElement.pause();
+      playBtn.style.opacity = '1';
+    }
+  });
+}
+
+// 12. Dynamic Footer Year
+document.getElementById('year').textContent = new Date().getFullYear();
+
+// 13. EmailJS Form Integration
+(function () {
+  emailjs.init("bjgzGjzTp3k2DkbWI");
+})();
+
+const contactForm = document.getElementById('contactForm');
+const formNote = document.getElementById('formNote');
+const sendBtn = document.getElementById('sendBtn');
+
+if (contactForm) {
+  contactForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    sendBtn.innerText = "SENDING SUMMARY...";
+    sendBtn.disabled = true;
+
+    const params = {
+      name: document.getElementById('name').value,
+      email: document.getElementById('email').value,
+      message: document.getElementById('message').value,
+    };
+
+    emailjs
+      .send("service_6v72yzo", "template_vjuwsnk", params)
+      .then(() => {
+        formNote.style.color = "#22c55e";
+        formNote.innerText = "✓ Concept details shared. Talk to you soon.";
+        contactForm.reset();
+
+        sendBtn.innerText = "SEND MESSAGE";
+        sendBtn.disabled = false;
+        
+        setTimeout(() => {
+          formNote.innerText = "";
+        }, 5000);
+      })
+      .catch((error) => {
+        formNote.style.color = "#ef4444";
+        formNote.innerText = "✗ Failed to transmit. Reach out directly via email.";
+        console.error("EmailJS Sync Failure:", error);
+
+        sendBtn.innerText = "SEND MESSAGE";
+        sendBtn.disabled = false;
+      });
+  });
+}
