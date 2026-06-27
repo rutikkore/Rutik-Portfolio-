@@ -1367,6 +1367,21 @@ button {
     height: 64px;
   }
   
+  .header .nav-status {
+    display: none; /* Hide from header to prevent layout wrap */
+  }
+  
+  .mobile-status-container {
+    margin-top: 16px;
+    display: flex;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .mobile-status-container .nav-status {
+    display: inline-flex;
+  }
+  
   .nav-links {
     display: none;
   }
@@ -1375,8 +1390,42 @@ button {
     display: flex;
   }
   
+  .editorial-section,
+  .builds-section,
+  .journey-section,
+  .toolkit-section {
+    padding: 80px 0;
+  }
+  
+  .connect-section {
+    padding: 80px 0 40px 0;
+  }
+  
+  .editorial-grid,
+  .connect-grid,
+  .toolkit-grid,
+  .hero-grid,
+  .case-study-grid {
+    gap: 32px;
+  }
+  
   .hero {
     padding-top: 80px;
+    min-height: auto;
+  }
+  
+  .hero-portrait {
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+  
+  .ticker-container {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    margin-top: 60px;
+    border-left: none;
+    border-right: none;
   }
   
   .hero-actions {
@@ -1390,11 +1439,26 @@ button {
     width: 100%;
   }
   
+  .case-study {
+    padding: 60px 0;
+    min-height: auto;
+  }
+  
   .case-study-actions {
     width: 100%;
     flex-direction: column;
-    align-items: stretch;
-    gap: 12px;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .case-study-actions .btn-premium {
+    width: 100%;
+    text-align: center;
+  }
+
+  .case-study-actions .btn-link {
+    align-self: center;
+    padding: 8px 0;
   }
   
   .case-study-impact {
@@ -1417,10 +1481,72 @@ button {
   }
 }
 
+@media (max-width: 576px) {
+  .journey-wrapper {
+    margin-left: 12px;
+    padding: 24px 0;
+  }
+  
+  .journey-item {
+    padding-left: 24px;
+    margin-bottom: 48px;
+  }
+  
+  .journey-dot {
+    left: -4px;
+  }
+  
+  .journey-title {
+    font-size: 1.2rem;
+  }
+  
+  .journey-company {
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+  }
+  
+  .journey-desc {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .display-large {
+    font-size: clamp(2.5rem, 10vw, 4rem);
+  }
+  
+  .display-medium {
+    font-size: clamp(1.8rem, 8vw, 2.8rem);
+  }
+  
+  .connect-heading {
+    font-size: clamp(1.8rem, 8vw, 2.8rem);
+  }
+  
+  .achievement-card {
+    padding: 16px;
+    gap: 16px;
+  }
+  
+  .connect-form {
+    padding: 20px;
+    gap: 28px;
+  }
+}
+
 /* Touch device hides custom cursor */
 @media (pointer: coarse) {
   .custom-cursor,
   .custom-cursor-follower {
     display: none !important;
+  }
+  
+  .spotlight {
+    left: 50% !important;
+    top: 25% !important;
+    width: 120vw;
+    height: 120vw;
+    transform: translate(-50%, -50%) !important;
+    opacity: 0.6;
   }
 }

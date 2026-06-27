@@ -124,7 +124,6 @@ magneticElements.forEach((el) => {
     });
   });
 });
-
 // 6. Mobile Side Navigation Overlay controls
 const hamburgerBtn = document.getElementById('hamburgerBtn');
 const mobileNav = document.getElementById('mobileNav');
@@ -138,10 +137,18 @@ hamburgerBtn.addEventListener('click', () => {
     spans[0].style.transform = 'translateY(7px) rotate(45deg)';
     spans[1].style.opacity = '0';
     spans[2].style.transform = 'translateY(-7px) rotate(-45deg)';
+    
+    // Stop background scroll on mobile overlay
+    if (typeof lenis !== 'undefined') lenis.stop();
+    document.body.style.overflow = 'hidden';
   } else {
     spans[0].style.transform = 'none';
     spans[1].style.opacity = '1';
     spans[2].style.transform = 'none';
+    
+    // Resume background scroll
+    if (typeof lenis !== 'undefined') lenis.start();
+    document.body.style.overflow = '';
   }
 });
 
@@ -153,6 +160,10 @@ mobileLinks.forEach((link) => {
     spans[0].style.transform = 'none';
     spans[1].style.opacity = '1';
     spans[2].style.transform = 'none';
+    
+    // Resume background scroll on link click
+    if (typeof lenis !== 'undefined') lenis.start();
+    document.body.style.overflow = '';
   });
 });
 
