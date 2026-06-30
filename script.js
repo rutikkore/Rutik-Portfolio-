@@ -15,6 +15,51 @@ window.addEventListener('load', () => {
   window.scrollTo(0, 0);
 });
 
+// Expose heroEntrance globally for the loader sequence
+window.heroEntrance = function() {
+  const tl = gsap.timeline({
+    defaults: { ease: 'power4.out', duration: 1.4 }
+  });
+
+  // Force ScrollTrigger refresh
+  ScrollTrigger.refresh();
+
+  tl.fromTo('#header', 
+    { y: -30, opacity: 0 }, 
+    { y: 0, opacity: 1, duration: 1.2 }
+  )
+  .fromTo('.hero-content .label-mono', 
+    { y: 35, opacity: 0 }, 
+    { y: 0, opacity: 1 }, 
+    '-=1.0'
+  )
+  .fromTo('.hero-title', 
+    { y: 50, opacity: 0 }, 
+    { y: 0, opacity: 1, duration: 1.6 }, 
+    '-=1.2'
+  )
+  .fromTo('.hero-tagline', 
+    { y: 30, opacity: 0 }, 
+    { y: 0, opacity: 1 }, 
+    '-=1.2'
+  )
+  .fromTo('.hero-actions', 
+    { y: 25, opacity: 0 }, 
+    { y: 0, opacity: 1 }, 
+    '-=1.2'
+  )
+  .fromTo('#heroPortrait img', 
+    { scale: 1.2, rotateY: -15, opacity: 0 }, 
+    { scale: 1, rotateY: 0, opacity: 1, duration: 1.8 }, 
+    '-=1.6'
+  )
+  .fromTo('.ticker-container', 
+    { opacity: 0, y: 15 }, 
+    { opacity: 1, y: 0, duration: 1.2 }, 
+    '-=1.4'
+  );
+};
+
 // 2. Lenis Smooth Scroll Initialization
 const lenis = new Lenis({
   duration: 1.2,
