@@ -13,9 +13,216 @@
 
   <!-- Project Stylesheet -->
   <link rel="stylesheet" href="style.css" />
+
+  <!-- System Boot Loader Styles -->
+  <style>
+    #rk-loader {
+      position: fixed;
+      inset: 0;
+      background: #0A0A0F;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      padding: clamp(28px, 5vw, 52px);
+      font-family: 'Courier New', monospace;
+      overflow: hidden;
+    }
+
+    #ldr-grid {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      background-image: radial-gradient(circle, #1E1E2E 1.2px, transparent 1.2px);
+      background-size: 30px 30px;
+      pointer-events: none;
+    }
+
+    #ldr-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    #ldr-logo {
+      font-size: 12px;
+      color: #E8F55C;
+      letter-spacing: 0.24em;
+      text-transform: uppercase;
+      opacity: 0;
+    }
+
+    #ldr-ts {
+      font-size: 10px;
+      color: #8A8A9A;
+      letter-spacing: 0.08em;
+      opacity: 0;
+    }
+
+    #ldr-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    #ldr-title {
+      font-size: 11px;
+      color: #8A8A9A;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 28px;
+      opacity: 0;
+    }
+
+    #ldr-checks {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .ldr-line {
+      display: flex;
+      align-items: center;
+      font-size: 12px;
+      opacity: 0;
+      transform: translateX(-12px);
+    }
+
+    .ldr-label {
+      color: #8A8A9A;
+      min-width: clamp(200px, 38%, 260px);
+      white-space: nowrap;
+    }
+
+    .ldr-dots {
+      flex: 1;
+      color: #2A2A3E;
+      overflow: hidden;
+      white-space: nowrap;
+      font-size: 10px;
+    }
+
+    .ldr-ok {
+      font-weight: 500;
+      opacity: 0;
+      transform: translateX(8px);
+      white-space: nowrap;
+      min-width: 62px;
+      text-align: right;
+    }
+
+    #ldr-ready {
+      margin-top: 26px;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #E8F55C;
+      opacity: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    #ldr-cursor {
+      display: inline-block;
+      width: 7px;
+      height: 13px;
+      background: #E8F55C;
+      vertical-align: middle;
+      animation: ldrBlink 1s step-end infinite;
+    }
+
+    @keyframes ldrBlink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0; }
+    }
+
+    #ldr-bar-track {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: #1E1E2E;
+      z-index: 3;
+    }
+
+    #ldr-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: #E8F55C;
+    }
+
+    #ldr-pct {
+      position: absolute;
+      bottom: 10px;
+      right: clamp(28px, 5vw, 52px);
+      font-family: 'Courier New', monospace;
+      font-size: 10px;
+      color: #8A8A9A;
+      letter-spacing: 0.12em;
+      z-index: 3;
+      opacity: 0;
+    }
+  </style>
 </head>
 
 <body>
+
+  <!-- System Boot Loader -->
+  <div id="rk-loader">
+    <!-- Dot grid background -->
+    <div id="ldr-grid"></div>
+
+    <!-- Top bar -->
+    <div id="ldr-top">
+      <span id="ldr-logo">RK —</span>
+      <span id="ldr-ts"></span>
+    </div>
+
+    <!-- Center terminal content -->
+    <div id="ldr-body">
+      <div id="ldr-title">&gt;&nbsp; RK.SYSTEMS — INITIALIZING</div>
+
+      <div id="ldr-checks">
+        <div class="ldr-line">
+          <span class="ldr-label">  FRONTEND ENGINE</span>
+          <span class="ldr-dots">···················</span>
+          <span class="ldr-ok" style="color:#4AEFCB;">[ OK ]</span>
+        </div>
+        <div class="ldr-line">
+          <span class="ldr-label">  API GATEWAY · 84ms</span>
+          <span class="ldr-dots">···················</span>
+          <span class="ldr-ok" style="color:#E8F55C;">[ FAST ]</span>
+        </div>
+        <div class="ldr-line">
+          <span class="ldr-label">  ACTIVE USERS · 1,200+</span>
+          <span class="ldr-dots">···················</span>
+          <span class="ldr-ok" style="color:#4AEFCB;">[ LIVE ]</span>
+        </div>
+        <div class="ldr-line">
+          <span class="ldr-label">  ENVIRONMENT · MUMBAI, IN</span>
+          <span class="ldr-dots">···················</span>
+          <span class="ldr-ok" style="color:#4AEFCB;">[ OK ]</span>
+        </div>
+      </div>
+
+      <div id="ldr-ready">
+        SYSTEMS NOMINAL — LAUNCHING
+        <span id="ldr-cursor"></span>
+      </div>
+    </div>
+
+    <!-- Progress bar at very bottom -->
+    <div id="ldr-bar-track">
+      <div id="ldr-bar-fill"></div>
+    </div>
+    <div id="ldr-pct">0%</div>
+  </div>
 
   <!-- Custom Cursor Elements -->
   <div class="custom-cursor" id="customCursor"></div>
@@ -662,6 +869,79 @@
   <script src="https://cdn.jsdelivr.net/gh/studio-freight/lenis@1.0.29/bundled/lenis.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script src="script.js"></script>
+
+  <!-- Portfolio Loader Animation Script -->
+  <script>
+  (function() {
+
+    // Skip loader on return visits in same session
+    if (sessionStorage.getItem('rk-loaded')) {
+      document.getElementById('rk-loader').style.display = 'none';
+      return;
+    }
+
+    // Skip entirely for users who prefer reduced motion
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.getElementById('rk-loader').style.display = 'none';
+      sessionStorage.setItem('rk-loaded', '1');
+      return;
+    }
+
+    // Set live timestamp
+    const d = new Date();
+    document.getElementById('ldr-ts').textContent =
+      d.toISOString().slice(0, 19).replace('T', ' ') + ' IST';
+
+    // Main timeline
+    const tl = gsap.timeline({
+      delay: 0.2,
+      onComplete: function() {
+        sessionStorage.setItem('rk-loaded', '1');
+        document.getElementById('rk-loader').style.display = 'none';
+        // Fire your existing heroEntrance() function here if you have one
+        if (typeof heroEntrance === 'function') heroEntrance();
+      }
+    });
+
+    tl
+      .to('#ldr-grid',   { opacity: 1, duration: 0.4, ease: 'power2.out' })
+      .to('#ldr-logo',   { opacity: 1, duration: 0.28, ease: 'power2.out' }, '-=0.22')
+      .to('#ldr-ts',     { opacity: 1, duration: 0.28 }, '-=0.18')
+      .to('#ldr-title',  { opacity: 1, duration: 0.32, ease: 'power2.out' }, '+=0.06')
+      .to('#ldr-pct',    { opacity: 1, duration: 0.2 }, '-=0.1');
+
+    // Animate each check line + its status
+    document.querySelectorAll('.ldr-line').forEach(function(el) {
+      const ok = el.querySelector('.ldr-ok');
+      tl
+        .to(el, { opacity: 1, x: 0, duration: 0.2, ease: 'power2.out' }, '+=0.04')
+        .to(ok, { opacity: 1, x: 0, duration: 0.16, ease: 'power3.out' }, '+=0.18');
+    });
+
+    tl
+      .to('#ldr-ready', { opacity: 1, duration: 0.28, ease: 'power2.out' }, '+=0.1')
+      // Wipe loader upward to reveal portfolio
+      .to('#rk-loader', {
+        clipPath: 'inset(0 0 100% 0)',
+        duration: 0.52,
+        ease: 'power3.inOut'
+      }, '+=0.45');
+
+    // Progress bar runs in parallel
+    gsap.to('#ldr-bar-fill', {
+      width: '100%',
+      duration: 1.95,
+      ease: 'power1.inOut',
+      delay: 0.72,
+      onUpdate: function() {
+        const p = Math.round(this.progress() * 100);
+        const el = document.getElementById('ldr-pct');
+        if (el) el.textContent = p + '%';
+      }
+    });
+
+  })();
+  </script>
 </body>
 
 </html>
