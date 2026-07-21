@@ -385,125 +385,179 @@ if (videoContainer && videoElement && playBtn) {
   });
 }
 
-// 12. EmailJS Form Integration
-(function () {
-  if (typeof emailjs !== 'undefined' && typeof EMAILJS_PUBLIC_KEY !== 'undefined' && EMAILJS_PUBLIC_KEY && EMAILJS_PUBLIC_KEY !== 'YOUR_PUBLIC_KEY') {
-    emailjs.init(EMAILJS_PUBLIC_KEY);
-  }
-})();
+// 12. EmailJS Form Integration & Focus Events
+if (typeof emailjs !== 'undefined') {
+  emailjs.init(EMAILJS_PUBLIC_KEY);
+}
 
 const contactForm = document.getElementById('contactForm');
-const sendBtn = document.getElementById('sendBtn');
+const submitBtn = document.getElementById('submitBtn');
 const formErrorMsg = document.getElementById('formErrorMsg');
 const contactSuccess = document.getElementById('contactSuccess');
 
-if (contactForm && sendBtn) {
-  contactForm.addEventListener('submit', function (e) {
-    e.preventDefault();
-
-    // Loading state: text changes to "Sending..." and pointer-events: none
-    const originalText = sendBtn.innerHTML;
-    sendBtn.innerHTML = 'Sending...';
-    sendBtn.style.pointerEvents = 'none';
-    if (formErrorMsg) {
-      formErrorMsg.style.display = 'none';
-      formErrorMsg.textContent = "";
-    }
-
-    const nameVal = document.getElementById('name').value;
-    const emailVal = document.getElementById('email').value;
-    const messageVal = document.getElementById('message').value;
-
-    const params = {
-      name: nameVal,
-      email: emailVal,
-      message: messageVal
-    };
-
-    const handleSuccess = () => {
-      // Success: entire form fades out (opacity: 0, y: -20, GSAP), then success line fades in
-      const formInputsStack = document.querySelector('.form-inputs-stack');
-      if (formInputsStack && typeof gsap !== 'undefined') {
-        gsap.to(formInputsStack, {
-          opacity: 0,
-          y: -20,
-          duration: 0.5,
-          ease: 'power3.inOut',
-          onComplete: () => {
-            formInputsStack.style.display = 'none';
-            if (contactSuccess) {
-              contactSuccess.style.display = 'block';
-              gsap.fromTo(contactSuccess,
-                { opacity: 0, y: 10 },
-                { opacity: 1, y: 0, duration: 0.5, ease: 'power3.out' }
-              );
-            }
-            contactForm.reset();
-            sendBtn.innerHTML = originalText;
-            sendBtn.style.pointerEvents = 'auto';
-          }
-        });
-      } else {
-        // Fallback if GSAP is not loaded
-        if (formInputsStack) formInputsStack.style.display = 'none';
-        if (contactSuccess) contactSuccess.style.display = 'block';
-        contactForm.reset();
-        sendBtn.innerHTML = originalText;
-        sendBtn.style.pointerEvents = 'auto';
-      }
-    };
-
-    const handleError = (error) => {
-      console.error("EmailJS Submission Failure:", error);
-      if (formErrorMsg) {
-        formErrorMsg.textContent = "Something went wrong. Try emailing me directly.";
-        formErrorMsg.style.display = 'block';
-      }
-      sendBtn.innerHTML = originalText;
-      sendBtn.style.pointerEvents = 'auto';
-    };
-
-    // If EmailJS constants are still placeholders, simulate success for visual verification
-    if (typeof EMAILJS_SERVICE_ID === 'undefined' || 
-        EMAILJS_SERVICE_ID === 'YOUR_SERVICE_ID' || 
-        EMAILJS_TEMPLATE_ID === 'YOUR_TEMPLATE_ID' || 
-        EMAILJS_PUBLIC_KEY === 'YOUR_PUBLIC_KEY') {
-      
-      console.warn("EmailJS configuration is using placeholders. Simulating successful form submission.");
-      setTimeout(handleSuccess, 1000);
-      
-    } else if (typeof emailjs !== 'undefined') {
-      
-      emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params)
-        .then(handleSuccess)
-        .catch(handleError);
-        
-    } else {
-      handleError("EmailJS library not loaded");
-    }
+if (contactForm) {
+  // Focus and Blur state toggles for field underlines
+  const inputs = contactForm.querySelectorAll('input, textarea');
+  inputs.forEach(input => {
+    input.addEventListener('focus', () => {
+      input.closest('.field-group').classList.add('focused');
+    });
+    input.addEventListener('blur', () => {
+      input.closest('.field-group').classList.remove('focused');
+    });
   });
+
+  if (submitBtn) {
+    contactForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      // Loading state
+      const submitText = submitBtn.querySelector('.submit-text');
+      const submitArrow = submitBtn.querySelector('.submit-arrow');
+      
+      const originalText = submitText.textContent;
+      submitText.textContent = 'Sending...';
+      submitBtn.style.pointerEvents = 'none';
+      if (submitArrow) submitArrow.style.opacity = '0';
+      if (formErrorMsg) formErrorMsg.style.display = 'none';
+
+      const params = {
+        from_name: contactForm.from_name.value,
+        reply_to: contactForm.reply_to.value,
+        message: contactForm.message.value
+      };
+
+      const handleSuccess = () => {
+        // Success state: Fade out form, fade in success message
+        if (typeof gsap !== 'undefined') {
+          gsap.to(contactForm, {
+            opacity: 0,
+            y: -16,
+            duration: 0.5,
+            ease: 'power3.inOut',
+            onComplete: () => {
+              contactForm.style.display = 'none';
+              if (contactSuccess) {
+                contactSuccess.style.display = 'block';
+                gsap.fromTo(contactSuccess,
+                  { opacity: 0, y: 20 },
+                  { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out' }
+                );
+              }
+            }
+          });
+        } else {
+          contactForm.style.display = 'none';
+          if (contactSuccess) contactSuccess.style.display = 'block';
+        }
+      };
+
+      const handleError = (error) => {
+        console.error("Form Submission Failure:", error);
+        submitText.textContent = originalText;
+        submitBtn.style.pointerEvents = 'auto';
+        if (submitArrow) submitArrow.style.opacity = '1';
+        if (formErrorMsg) formErrorMsg.style.display = 'block';
+      };
+
+      // If configuration contains placeholder keys, simulate successful submission
+      if (EMAILJS_SERVICE_ID === 'YOUR_SERVICE_ID' || 
+          EMAILJS_TEMPLATE_ID === 'YOUR_TEMPLATE_ID' || 
+          EMAILJS_PUBLIC_KEY === 'YOUR_PUBLIC_KEY') {
+        console.warn("Using placeholder credentials. Simulating form submission...");
+        console.log("EmailJS Params:", params);
+        setTimeout(handleSuccess, 1000);
+      } else if (typeof emailjs !== 'undefined') {
+        console.log("EmailJS Params:", params);
+        emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, params)
+          .then(handleSuccess)
+          .catch(handleError);
+      } else {
+        handleError("EmailJS library not loaded");
+      }
+    });
+  }
 }
 
-// 13. Minimalist Contact Section Scroll Animations
+// 13. Editorial Contact Section GSAP ScrollTrigger Animations
 if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
-  // On scroll enter, animate Zone 1 statement lines and available label
-  gsap.fromTo('.seamless-headline .headline-line, .seamless-status',
-    { y: 60, opacity: 0 },
+  // Left Column Timeline
+  const leftTimeline = gsap.timeline({
+    scrollTrigger: {
+      trigger: '#connect',
+      start: 'top 75%',
+      toggleActions: 'play none none none'
+    }
+  });
+
+  leftTimeline
+    .fromTo('#connect .connect-overline', 
+      { opacity: 0, y: 16 }, 
+      { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out' }
+    )
+    .fromTo('#connect .reveal-line', 
+      { opacity: 0, y: 48 }, 
+      { opacity: 1, y: 0, duration: 1, ease: 'power3.out', stagger: 0.12 },
+      '>0.1'
+    )
+    .fromTo('#connect .connect-description', 
+      { opacity: 0, y: 24 }, 
+      { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out' },
+      '>0.15'
+    )
+    .fromTo('#connect .connect-availability', 
+      { opacity: 0 }, 
+      { opacity: 1, duration: 0.6 },
+      '>0.1'
+    );
+
+  // Right Column (Form fields) Timeline
+  const rightTimeline = gsap.timeline({
+    scrollTrigger: {
+      trigger: '#connect',
+      start: 'top 75%',
+      toggleActions: 'play none none none'
+    }
+  });
+
+  rightTimeline
+    .fromTo('#connect .field-group', 
+      { opacity: 0, y: 20 }, 
+      { opacity: 1, y: 0, duration: 0.7, ease: 'power3.out', stagger: 0.08 }
+    )
+    .fromTo('#connect .submit-line', 
+      { opacity: 0, y: 12 }, 
+      { opacity: 1, y: 0, duration: 0.6 },
+      '>0.1'
+    );
+
+  // Links Row
+  gsap.fromTo('#connect .connect-links-row',
+    { opacity: 0, y: 16 },
     {
+      opacity: 1,
       y: 0,
-      opacity: (index, target) => {
-        if (target.classList.contains('weight-300')) return 0.9;
-        if (target.classList.contains('weight-600')) return 1;
-        return 0.4;
-      },
-      stagger: 0.15,
-      duration: 1.0,
-      ease: 'power3.out',
+      duration: 0.7,
       scrollTrigger: {
-        trigger: '.contact-zone-1',
-        start: 'top bottom-=80px',
+        trigger: '#connect .connect-links-row',
+        start: 'top 90%',
+        toggleActions: 'play none none none'
+      }
+    }
+  );
+
+  // Footer Close
+  gsap.fromTo('#connect .connect-footer-close',
+    { opacity: 0 },
+    {
+      opacity: 1,
+      duration: 0.8,
+      scrollTrigger: {
+        trigger: '#connect .connect-footer-close',
+        start: 'top 95%',
         toggleActions: 'play none none none'
       }
     }
   );
 }
+
