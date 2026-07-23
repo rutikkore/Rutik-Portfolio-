@@ -7,6 +7,13 @@
    - EmailJS Submission Form
    ========================================================================== */
 
+window.addEventListener('load', () => {
+  document.body.classList.add('loaded');
+  if (typeof window.heroEntrance === 'function') {
+    window.heroEntrance();
+  }
+});
+
 // 0. EmailJS Configuration placeholders
 const EMAILJS_SERVICE_ID = 'service_6v72yzo';
 const EMAILJS_TEMPLATE_ID = 'template_vjuwsnk';
