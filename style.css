@@ -4,7 +4,7 @@
    1. VARIABLES & RESET
    ========================================================================== */
 :root {
-  --bg-primary: #000000;
+  --bg-primary: #0a0a0f;
   --bg-secondary: #0a0a0a;
   --bg-tertiary: #121212;
   --accent: #0055ff;
@@ -135,70 +135,117 @@ button {
   mix-blend-mode: screen;
 }
 
-/* Custom Cursor Follower */
+/* Custom Premium Cursor */
+@media (pointer: fine) {
+  html,
+  body,
+  a,
+  button,
+  .hover-trigger-view,
+  .case-study-visual {
+    cursor: none !important;
+  }
+
+  input,
+  textarea {
+    cursor: text !important;
+  }
+}
+
 .custom-cursor {
-  width: 6px;
-  height: 6px;
-  background-color: var(--text-main);
+  width: 8px;
+  height: 8px;
+  background-color: #ffffff;
   border-radius: 50%;
   position: fixed;
-  transform: translate(-50%, -50%);
+  top: 0;
+  left: 0;
   pointer-events: none;
   z-index: 10000;
-  transition: width 0.3s ease, height 0.3s ease, background-color 0.3s ease;
+  opacity: 1;
+  transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .custom-cursor-follower {
-  width: 32px;
-  height: 32px;
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  background-color: rgba(255, 255, 255, 0);
   border-radius: 50%;
   position: fixed;
-  transform: translate(-50%, -50%);
+  top: 0;
+  left: 0;
   pointer-events: none;
   z-index: 9999;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 8px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  color: var(--text-main);
-  text-transform: uppercase;
+  opacity: 1;
   transition:
     width 0.3s cubic-bezier(0.16, 1, 0.3, 1),
     height 0.3s cubic-bezier(0.16, 1, 0.3, 1),
     background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-    border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .custom-cursor-follower span {
-  display: none;
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: #ffffff;
+  text-transform: uppercase;
+  opacity: 0;
   pointer-events: none;
+  transition: opacity 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Hover States for cursor */
-.custom-cursor.hovered {
-  width: 0;
-  height: 0;
+/* Hovering links and buttons */
+.custom-cursor.hover-links {
+  opacity: 0;
+  transform: scale(0);
 }
 
-.custom-cursor-follower.hovered {
-  width: 60px;
-  height: 60px;
-  background-color: rgba(255, 255, 255, 0.08);
+.custom-cursor-follower.hover-links {
+  width: 64px;
+  height: 64px;
+  background-color: rgba(255, 255, 255, 0.1);
   border-color: rgba(255, 255, 255, 0.8);
 }
 
-.custom-cursor-follower.view-mode {
-  width: 80px;
-  height: 80px;
-  background-color: var(--accent);
-  border-color: transparent;
+.custom-cursor-follower.hover-links span {
+  opacity: 0;
 }
 
-.custom-cursor-follower.view-mode span {
-  display: block;
+/* Hovering project cards */
+.custom-cursor.hover-projects {
+  opacity: 1;
+}
+
+.custom-cursor-follower.hover-projects {
+  width: 64px;
+  height: 64px;
+  background-color: rgba(255, 255, 255, 0);
+  border-color: rgba(255, 255, 255, 0.8);
+}
+
+.custom-cursor-follower.hover-projects span {
+  opacity: 1;
+}
+
+/* Inside inputs */
+.custom-cursor.hover-inputs,
+.custom-cursor-follower.hover-inputs {
+  opacity: 0;
+}
+
+/* Touch device hides custom cursor */
+@media (pointer: coarse) {
+  .custom-cursor,
+  .custom-cursor-follower {
+    display: none !important;
+  }
 }
 
 /* ==========================================================================
@@ -557,6 +604,14 @@ button {
   gap: 20px;
 }
 
+/* Cinematic entrance initial states */
+.hero-content .label-mono,
+.hero-title,
+.hero-tagline,
+.hero-actions {
+  opacity: 0;
+}
+
 .hero-portrait {
   position: relative;
   display: flex;
@@ -852,6 +907,12 @@ button {
   justify-content: center;
   align-items: center;
   width: 100%;
+  /* Perspective must live on the PARENT of the tilting element, not on the
+     element itself — it defines how "far" the viewer is from the 3D scene,
+     which is what makes rotateX/rotateY read as depth instead of a flat
+     skew. 1000px is a moderate depth: low enough to feel dimensional,
+     high enough to stay subtle at only 8deg of rotation. */
+  perspective: 1000px;
 }
 
 .browser-mockup {
@@ -863,6 +924,14 @@ button {
   box-shadow: 0 30px 60px rgba(0, 0, 0, 0.5);
   transform: scale(0.96);
   transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  /* Renders this element's own transform in 3D space rather than flattening
+     it onto the page — required for the rotation to look like a tilting
+     plane instead of a sheared rectangle. */
+  transform-style: preserve-3d;
+  /* Promotes the card to its own GPU layer ahead of time, so the first
+     mousemove frame isn't the one paying the layer-creation cost (which is
+     what causes that first-frame stutter on hover). */
+  will-change: transform;
 }
 
 .browser-header {
@@ -897,9 +966,13 @@ button {
   transition: transform 0.8s ease-in-out;
 }
 
-.browser-mockup:hover img {
-  transform: scale(1.03);
-}
+/* NOTE: the old ".browser-mockup:hover img { transform: scale(1.03) }" rule
+   was removed. GSAP now sets `img.style.transform` directly on mousemove
+   (see script.js), and inline styles always win over stylesheet rules — so
+   that CSS rule would never actually apply once the tilt handler is active.
+   The equivalent "lift" scale is now folded into the GSAP tween instead
+   (search for `scale: 1.03` in the tilt handler) so one system owns the
+   transform and nothing fights over it. */
 
 /* Video demo overlay setup */
 .video-container {
@@ -991,7 +1064,7 @@ button {
   border: 1px solid var(--border-color);
   border-radius: 50%;
   z-index: 2;
-  transition: background-color 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 .journey-item.active .journey-dot {
@@ -1738,4 +1811,48 @@ button {
     transform: translate(-50%, -50%) !important;
     opacity: 0.6;
   }
+}
+
+/* Ambient Background Overlays */
+.ambient-blue {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: -1;
+  background: radial-gradient(circle at 90% 15%, rgba(10, 20, 60, 0.45) 0%, rgba(0, 0, 0, 0) 70%);
+  filter: blur(80px);
+  opacity: 0;
+  will-change: opacity;
+}
+
+.ambient-dark {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: -1;
+  background-color: #000000;
+  opacity: 0;
+  will-change: opacity;
+}
+
+/* Disable any blur effects on mobile */
+@media (max-width: 768px) {
+  .ambient-blue {
+    filter: none !important;
+    display: none !important;
+  }
+  .ambient-dark {
+    display: none !important;
+  }
+}
+
+.btn-text {
+  display: inline-block;
+  pointer-events: none;
 }

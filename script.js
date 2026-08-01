@@ -29,47 +29,75 @@ window.addEventListener('load', () => {
 
 // Expose heroEntrance globally for the loader sequence
 window.heroEntrance = function () {
+  // 1. Prepare the title by wrapping each character in a span for split effect
+  const heroTitle = document.querySelector('.hero-title');
+  if (heroTitle) {
+    const text = heroTitle.textContent.trim();
+    const words = text.split(' ');
+    heroTitle.innerHTML = words.map(word => {
+      const chars = word.split('').map(char => {
+        return `<span class="char-wrapper" style="display: inline-block; overflow: hidden; vertical-align: bottom;"><span class="char" style="display: inline-block; transform: translateY(80px); opacity: 0;">${char}</span></span>`;
+      }).join('');
+      return `<span class="word-wrapper" style="display: inline-block; white-space: nowrap;">${chars}</span>`;
+    }).join('<span class="char-space" style="display: inline-block;">&nbsp;</span>');
+  }
+
+  // 2. Set initial states via GSAP (guarantees properties are registered in GSAP)
+  gsap.set('.hero-content .label-mono', { y: 20, opacity: 0 });
+  gsap.set('.hero-title', { opacity: 1 }); // Reveal heading container (chars are translateY(80) / opacity 0)
+  gsap.set('.hero-tagline', { y: 20, opacity: 0 });
+  gsap.set('.hero-actions', { y: 15, opacity: 0 });
+  
+  // Also set initial states for other hero elements to align with overall entrance
+  gsap.set('#header', { y: -30, opacity: 0 });
+  gsap.set('#heroPortrait img', { scale: 1.2, rotateY: -15, opacity: 0 });
+  gsap.set('.ticker-container', { y: 15, opacity: 0 });
+
   const tl = gsap.timeline({
-    defaults: { ease: 'power4.out', duration: 1.4 }
+    defaults: { ease: 'power4.out' }
   });
 
   // Force ScrollTrigger refresh
   ScrollTrigger.refresh();
 
-  tl.fromTo('#header',
-    { y: -30, opacity: 0 },
-    { y: 0, opacity: 1, duration: 1.2 }
-  )
-    .fromTo('.hero-content .label-mono',
-      { y: 35, opacity: 0 },
-      { y: 0, opacity: 1 },
-      '-=1.0'
-    )
-    .fromTo('.hero-title',
-      { y: 50, opacity: 0 },
-      { y: 0, opacity: 1, duration: 1.6 },
-      '-=1.2'
-    )
-    .fromTo('.hero-tagline',
-      { y: 30, opacity: 0 },
-      { y: 0, opacity: 1 },
-      '-=1.2'
-    )
-    .fromTo('.hero-actions',
-      { y: 25, opacity: 0 },
-      { y: 0, opacity: 1 },
-      '-=1.2'
-    )
-    .fromTo('#heroPortrait img',
-      { scale: 1.2, rotateY: -15, opacity: 0 },
-      { scale: 1, rotateY: 0, opacity: 1, duration: 1.8 },
-      '-=1.6'
-    )
-    .fromTo('.ticker-container',
-      { opacity: 0, y: 15 },
-      { opacity: 1, y: 0, duration: 1.2 },
-      '-=1.4'
-    );
+  // 3. Cinematic Entrance Sequence (completed in under 2 seconds total)
+  tl.to('#header', {
+    y: 0,
+    opacity: 1,
+    duration: 0.8
+  })
+  .to('.hero-content .label-mono', {
+    y: 0,
+    opacity: 1,
+    duration: 0.5
+  }, '-=0.6')
+  .to('.hero-title .char', {
+    y: 0,
+    opacity: 1,
+    duration: 0.6,
+    stagger: 0.03
+  }, '-=0.4')
+  .to('.hero-tagline', {
+    y: 0,
+    opacity: 1,
+    duration: 0.5
+  }, '-=0.3')
+  .to('.hero-actions', {
+    y: 0,
+    opacity: 1,
+    duration: 0.5
+  }, '-=0.3')
+  .to('#heroPortrait img', {
+    scale: 1,
+    rotateY: 0,
+    opacity: 1,
+    duration: 1.0
+  }, '-=0.9')
+  .to('.ticker-container', {
+    y: 0,
+    opacity: 1,
+    duration: 0.8
+  }, '-=0.8');
 };
 
 // 2. Lenis Smooth Scroll Initialization
@@ -110,76 +138,147 @@ document.addEventListener('mousemove', (e) => {
 const cursor = document.getElementById('customCursor');
 const cursorFollower = document.getElementById('customCursorFollower');
 let mouseX = 0, mouseY = 0;
-let cx = 0, cy = 0;
-let cfx = 0, cfy = 0;
+let ringX = 0, ringY = 0;
+let isTouchDevice = false;
 
-document.addEventListener('mousemove', (e) => {
-  mouseX = e.clientX;
-  mouseY = e.clientY;
-});
-
-function tickCursor() {
-  cx += (mouseX - cx) * 0.25;
-  cy += (mouseY - cy) * 0.25;
-  if (cursor) {
-    cursor.style.left = `${cx}px`;
-    cursor.style.top = `${cy}px`;
-  }
-
-  cfx += (mouseX - cfx) * 0.14;
-  cfy += (mouseY - cfy) * 0.14;
-  if (cursorFollower) {
-    cursorFollower.style.left = `${cfx}px`;
-    cursorFollower.style.top = `${cfy}px`;
-  }
-
-  requestAnimationFrame(tickCursor);
+// Check if touch device
+if (window.matchMedia("(pointer: coarse)").matches || 'ontouchstart' in window) {
+  isTouchDevice = true;
+  document.body.classList.add('touch-device');
 }
-tickCursor();
 
-// Set Cursor Follower Hover States
-const hoverables = document.querySelectorAll('a, button, input, textarea, .hover-trigger-view');
-hoverables.forEach((el) => {
-  el.addEventListener('mouseenter', () => {
-    if (el.classList.contains('hover-trigger-view')) {
-      cursorFollower.classList.add('view-mode');
-      cursor.classList.add('hovered');
+if (!isTouchDevice && cursor && cursorFollower) {
+  // Set initial GSAP centering transforms for both dot and ring
+  gsap.set(cursor, { xPercent: -50, yPercent: -50 });
+  gsap.set(cursorFollower, { xPercent: -50, yPercent: -50 });
+
+  // Update mouse positions instantly
+  document.addEventListener('mousemove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    
+    // Dot position updates instantly with 0 lag using gsap.set
+    gsap.set(cursor, { x: mouseX, y: mouseY });
+  });
+
+  // Lerp for the ring position (lerp factor 0.12)
+  function tickCursor() {
+    ringX += (mouseX - ringX) * 0.12;
+    ringY += (mouseY - ringY) * 0.12;
+    
+    gsap.set(cursorFollower, { x: ringX, y: ringY });
+    requestAnimationFrame(tickCursor);
+  }
+  requestAnimationFrame(tickCursor);
+
+  // Set Hover State helper
+  function setCursorState(state) {
+    cursor.classList.remove('hover-links', 'hover-projects', 'hover-inputs');
+    cursorFollower.classList.remove('hover-links', 'hover-projects', 'hover-inputs');
+    if (state) {
+      cursor.classList.add(state);
+      cursorFollower.classList.add(state);
+    }
+  }
+
+  // Event delegation on mouseover for robust hover states
+  document.addEventListener('mouseover', (e) => {
+    const target = e.target;
+    if (!target) return;
+
+    if (target.closest('input, textarea')) {
+      setCursorState('hover-inputs');
+    } else if (target.closest('a, button, .btn-magnetic')) {
+      setCursorState('hover-links');
+    } else if (target.closest('.hover-trigger-view, .case-study-visual, .browser-mockup')) {
+      setCursorState('hover-projects');
     } else {
-      cursorFollower.classList.add('hovered');
-      cursor.classList.add('hovered');
+      setCursorState(null);
     }
   });
 
-  el.addEventListener('mouseleave', () => {
-    cursorFollower.classList.remove('hovered', 'view-mode');
-    cursor.classList.remove('hovered');
+  // Fade out cursor when mouse leaves window and fade in when it enters
+  document.addEventListener('mouseleave', () => {
+    gsap.to([cursor, cursorFollower], { opacity: 0, duration: 0.3 });
   });
-});
+
+  document.addEventListener('mouseenter', () => {
+    gsap.to([cursor, cursorFollower], { opacity: 1, duration: 0.3 });
+  });
+}
 
 // 5. Magnetic Buttons Physics Engine
-const magneticElements = document.querySelectorAll('.btn-magnetic');
 if (window.matchMedia("(pointer: fine)").matches) {
+  const magneticElements = document.querySelectorAll('.btn-magnetic');
+  
   magneticElements.forEach((el) => {
-    el.addEventListener('mousemove', (e) => {
+    const btnText = el.querySelector('.btn-text') || el;
+    
+    // Create GSAP quickSetters for high performance on mousemove
+    const setBtnX = gsap.quickSetter(el, "x", "px");
+    const setBtnY = gsap.quickSetter(el, "y", "px");
+    const setTextX = gsap.quickSetter(btnText, "x", "px");
+    const setTextY = gsap.quickSetter(btnText, "y", "px");
+    
+    let isHovering = false;
+    
+    document.addEventListener('mousemove', (e) => {
       const rect = el.getBoundingClientRect();
-      const x = e.clientX - rect.left - rect.width / 2;
-      const y = e.clientY - rect.top - rect.height / 2;
-
-      gsap.to(el, {
-        x: x * 0.35,
-        y: y * 0.35,
-        duration: 0.3,
-        ease: 'power2.out'
-      });
-    });
-
-    el.addEventListener('mouseleave', () => {
-      gsap.to(el, {
-        x: 0,
-        y: 0,
-        duration: 0.6,
-        ease: 'elastic.out(1, 0.3)'
-      });
+      
+      // Calculate button center
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      
+      // Distance from cursor to button center
+      const deltaX = e.clientX - centerX;
+      const deltaY = e.clientY - centerY;
+      const distance = Math.hypot(deltaX, deltaY);
+      
+      // Define hover boundary: 80px from button outer edge
+      const hoverRadius = rect.width / 2 + 80;
+      
+      if (distance < hoverRadius) {
+        isHovering = true;
+        
+        // Kill any active spring-back tweens to prevent clashing
+        gsap.killTweensOf([el, btnText]);
+        
+        // Strength scales from 1 (center) to 0 (boundary edge)
+        const strength = (hoverRadius - distance) / hoverRadius;
+        
+        // Maximum displacement: 20px for button, 10px (half) for text inside
+        const targetX = deltaX * 0.25 * strength;
+        const targetY = deltaY * 0.25 * strength;
+        
+        // Bound displacements to max 20px
+        const boundedX = Math.min(20, Math.max(-20, targetX));
+        const boundedY = Math.min(20, Math.max(-20, targetY));
+        
+        // Set positions instantly with 0 lag using quickSetter
+        setBtnX(boundedX);
+        setBtnY(boundedY);
+        setTextX(boundedX * 0.5);
+        setTextY(boundedY * 0.5);
+      } else {
+        if (isHovering) {
+          isHovering = false;
+          
+          // Spring back to center using elastic.out(1, 0.4) ease
+          gsap.to(el, {
+            x: 0,
+            y: 0,
+            duration: 0.8,
+            ease: 'elastic.out(1, 0.4)'
+          });
+          
+          gsap.to(btnText, {
+            x: 0,
+            y: 0,
+            duration: 0.8,
+            ease: 'elastic.out(1, 0.4)'
+          });
+        }
+      }
     });
   });
 }
@@ -300,6 +399,108 @@ if (portrait) {
   });
 }
 
+// 8b. Project Card 3D Tilt (Linear-style) — .browser-mockup cards
+// -----------------------------------------------------------------
+// Guard the whole feature behind a "fine pointer" check. matchMedia
+// (pointer: fine) is true for mice/trackpads and false for touchscreens,
+// so on touch devices this block never runs and mousemove/mouseleave
+// listeners are never attached — there's no tilt to disable later because
+// it's never enabled. This is more reliable than checking screen width,
+// since it also correctly skips tilt on touch laptops with a mouse absent.
+if (window.matchMedia('(pointer: fine)').matches) {
+
+  const TILT_MAX_DEG = 8;      // Max card rotation on either axis, in degrees
+  const IMAGE_MAX_PX = 12;     // Max opposite-direction image drift, in pixels
+
+  // One handler per card, since each card tracks its own bounding box and
+  // owns its own image element.
+  document.querySelectorAll('.browser-mockup').forEach((card) => {
+    const img = card.querySelector('.browser-window img');
+    if (!img) return; // Skip cards that don't have the expected inner image
+
+    card.addEventListener('mousemove', (e) => {
+      const rect = card.getBoundingClientRect();
+
+      // Cursor position relative to the card's own top-left corner, not the
+      // viewport — this is what lets the same formula work for a card
+      // anywhere on the page.
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      // Cursor position re-centered so the middle of the card is (0, 0)
+      // and the edges are ±half the card's width/height. This is the
+      // "distance from center" that drives the tilt amount.
+      const px = x - rect.width / 2;
+      const py = y - rect.height / 2;
+
+      // Normalize to a -1...1 range by dividing by the half-width/height,
+      // then scale by the max degrees. Note the axis swap: horizontal
+      // cursor movement (px) drives rotation AROUND the Y axis, and
+      // vertical movement (py) drives rotation around the X axis — that's
+      // just how 3D rotation axes work (rotateX tips the top/bottom edge
+      // toward/away from you, which is caused by up/down cursor motion).
+      const rotY = (px / (rect.width / 2)) * TILT_MAX_DEG;
+      // Inverted (negative) because moving the cursor toward the TOP of
+      // the card (negative py) should tilt the top edge UP, toward the
+      // viewer — without the flip it would tilt away, which reads as
+      // "pushing down" instead of "lifting toward you".
+      const rotX = -(py / (rect.height / 2)) * TILT_MAX_DEG;
+
+      // Card itself: instant follow (duration: 0) so it feels physically
+      // pinned to the cursor with zero lag, the way Linear's cards do.
+      // transformPerspective is set here (rather than only in CSS) so GSAP
+      // is aware of the 3D context when it computes the rotation matrix.
+      gsap.to(card, {
+        rotateX: rotX,
+        rotateY: rotY,
+        transformPerspective: 1000,
+        duration: 0,
+        ease: 'none',
+        overwrite: 'auto' // Cancels any in-flight leave-tween immediately
+      });
+
+      // Inner image: same normalized -1...1 values, but inverted and at a
+      // smaller max displacement (12px vs 8deg of rotation). Inverting the
+      // sign makes the image drift OPPOSITE the tilt direction — e.g. when
+      // the card's right edge tilts toward the viewer, the image nudges
+      // left — which is what sells the illusion of the image sitting on a
+      // separate depth layer inside the card (parallax) rather than being
+      // painted flat onto it.
+      gsap.to(img, {
+        x: -(px / (rect.width / 2)) * IMAGE_MAX_PX,
+        y: -(py / (rect.height / 2)) * IMAGE_MAX_PX,
+        scale: 1.03, // Folds in the "lift" scale the old CSS :hover rule used to do
+        duration: 0,
+        ease: 'none',
+        overwrite: 'auto'
+      });
+    });
+
+    card.addEventListener('mouseleave', () => {
+      // Spring back to flat. power3.out (fast start, gentle settle) reads
+      // as "premium" and controlled; swap to 'elastic.out(1, 0.5)' instead
+      // if you want a visible overshoot/bounce rather than a clean settle —
+      // power3 was chosen here to match the "purposeful, not gimmicky" brief.
+      gsap.to(card, {
+        rotateX: 0,
+        rotateY: 0,
+        duration: 0.6,
+        ease: 'power3.out',
+        overwrite: 'auto'
+      });
+
+      gsap.to(img, {
+        x: 0,
+        y: 0,
+        scale: 1,
+        duration: 0.6,
+        ease: 'power3.out',
+        overwrite: 'auto'
+      });
+    });
+  });
+}
+
 // 9. Marquee speed variation on scroll
 const tickerTrack = document.querySelector('.ticker-track');
 if (tickerTrack) {
@@ -328,32 +529,96 @@ mockups.forEach((mock) => {
   );
 });
 
-// Journey timeline line-drawing progress
-const journeyLineProgress = document.getElementById('journeyLineProgress');
+// Journey timeline ScrollTrigger Animation
 const journeyWrapper = document.querySelector('.journey-wrapper');
-const journeyItems = document.querySelectorAll('.journey-item');
+if (journeyWrapper && typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+  const items = gsap.utils.toArray('.journey-item');
+  const journeyLineProgress = document.getElementById('journeyLineProgress');
 
-if (journeyWrapper && journeyLineProgress) {
-  gsap.to(journeyLineProgress, {
-    height: '100%',
-    scrollTrigger: {
-      trigger: journeyWrapper,
-      start: 'top center',
-      end: 'bottom center',
-      scrub: true,
-      onUpdate: (self) => {
-        const progress = self.progress;
-        const indexToHighlight = Math.floor(progress * journeyItems.length);
-        journeyItems.forEach((item, index) => {
-          if (index <= indexToHighlight) {
-            item.classList.add('active');
-          } else {
-            item.classList.remove('active');
-          }
-        });
-      }
+  if (window.matchMedia("(max-width: 768px)").matches) {
+    // Mobile fallback: simple fade-in on scroll for each item
+    items.forEach(item => {
+      const dot = item.querySelector('.journey-dot');
+      
+      // Set initial states
+      gsap.set(dot, { scale: 0 });
+      gsap.set(item, { opacity: 0, x: 20 });
+
+      gsap.to(dot, {
+        scale: 1,
+        duration: 0.4,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: item,
+          start: 'top 85%',
+          toggleActions: 'play none none none'
+        }
+      });
+
+      gsap.to(item, {
+        opacity: 1,
+        x: 0,
+        duration: 0.6,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: item,
+          start: 'top 85%',
+          toggleActions: 'play none none none'
+        }
+      });
+    });
+  } else {
+    // Desktop: Scroll-driven progress line drawing and item reveal
+    const wrapperHeight = journeyWrapper.clientHeight;
+    
+    // Set initial states
+    items.forEach(item => {
+      gsap.set(item.querySelector('.journey-dot'), { scale: 0 });
+      gsap.set(item, { opacity: 0, x: 30 });
+    });
+    if (journeyLineProgress) {
+      gsap.set(journeyLineProgress, { height: '0%' });
     }
-  });
+
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: journeyWrapper,
+        start: 'top 75%',
+        end: 'bottom 60%',
+        scrub: 1.5
+      }
+    });
+
+    items.forEach((item, index) => {
+      const dot = item.querySelector('.journey-dot');
+      const dotCenter = item.offsetTop + dot.offsetTop + (dot.offsetHeight / 2);
+      const targetHeightPercent = Math.min(100, Math.max(0, (dotCenter / wrapperHeight) * 100));
+
+      if (index === 0) {
+        // First item animates immediately
+        tl.to(dot, { scale: 1, duration: 0.3 })
+          .to(item, { opacity: 1, x: 0, duration: 0.5 }, '-=0.2');
+      } else {
+        // Draw line to this item's dot marker
+        tl.to(journeyLineProgress, {
+          height: `${targetHeightPercent}%`,
+          duration: 1,
+          ease: 'none'
+        })
+        .to(dot, { scale: 1, duration: 0.3 })
+        .to(item, { opacity: 1, x: 0, duration: 0.5 }, '-=0.2');
+      }
+    });
+
+    // Finally, draw the line to the very end of the wrapper
+    if (journeyLineProgress) {
+      tl.to(journeyLineProgress, {
+        height: '100%',
+        duration: 0.4,
+        ease: 'none'
+      });
+    }
+  }
 }
 
 // Content fades & line reveal animations
@@ -566,5 +831,39 @@ if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
       }
     }
   );
-}
 
+  // Ambient background ScrollTrigger animations (disabled on mobile for performance)
+  if (window.matchMedia("(min-width: 769px)").matches) {
+    // 1. Fade in the blue tint ambient gradient when entering projects section
+    gsap.to('#ambientBlue', {
+      opacity: 1,
+      scrollTrigger: {
+        trigger: '#featured-build',
+        start: 'top bottom',
+        end: 'top center',
+        scrub: true
+      }
+    });
+
+    // 2. Fade out blue tint and fade in dark overlay (pure black) when entering contact section
+    gsap.to('#ambientBlue', {
+      opacity: 0,
+      scrollTrigger: {
+        trigger: '#connect',
+        start: 'top bottom',
+        end: 'top center',
+        scrub: true
+      }
+    });
+
+    gsap.to('#ambientDark', {
+      opacity: 1,
+      scrollTrigger: {
+        trigger: '#connect',
+        start: 'top bottom',
+        end: 'top center',
+        scrub: true
+      }
+    });
+  }
+}

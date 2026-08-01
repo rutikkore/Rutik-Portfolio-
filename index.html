@@ -18,6 +18,10 @@
 
 <body>
 
+  <!-- Ambient background overlays -->
+  <div class="ambient-blue" id="ambientBlue"></div>
+  <div class="ambient-dark" id="ambientDark"></div>
+
   <!-- Custom Cursor Elements -->
   <div class="custom-cursor" id="customCursor"></div>
   <div class="custom-cursor-follower" id="customCursorFollower">
@@ -79,6 +83,7 @@
   <main id="home" class="hero">
     <div class="container hero-grid">
       <div class="hero-content">
+        <span class="label-mono hero-overline">Creative Frontend Engineer</span>
         <h1 class="display-large hero-title">
           RUTIK KORE
         </h1>
@@ -87,10 +92,10 @@
         </p>
         <div class="hero-actions">
           <a class="btn-premium btn-magnetic accent-btn" href="assets/Rutik_Manish_Kore_Resume.pdf" download>
-            Download Resume
+            <span class="btn-text">Download Resume</span>
           </a>
           <a class="btn-premium btn-magnetic" href="#connect">
-            Get in touch
+            <span class="btn-text">Get in touch</span>
           </a>
         </div>
       </div>
@@ -266,7 +271,6 @@
   <!-- BUILDS SECTION -->
   <section class="builds-section" id="builds">
     <div class="container">
-      <span class="label-mono">All Builds & Creations</span>
 
       <!-- Project Case Study 2: Carbon Footprint Tracker -->
       <article class="case-study">
