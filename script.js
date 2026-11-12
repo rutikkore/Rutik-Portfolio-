@@ -363,143 +363,184 @@ lenis.on('scroll', () => {
   });
 });
 
-// 8. 3D Mouse Reactive Portrait Parallax
-const portrait = document.getElementById('heroPortrait');
-if (portrait) {
-  const img = portrait.querySelector('img');
+// ==========================================================================
+// PHASE 1: Hero & Project Cards 3D Motion, Tilt, Glare, & Parallax Controller
+// To disable: comment out the call to initPhase1HeroAndBuilds() below
+// ==========================================================================
+function initPhase1HeroAndBuilds() {
+  const isReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isCoarsePointer = window.matchMedia('(pointer: coarse)').matches;
+  const isSmallScreen = window.innerWidth < 768;
 
-  portrait.addEventListener('mousemove', (e) => {
-    const rect = portrait.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    const centerX = rect.width / 2;
-    const centerY = rect.height / 2;
+  // Single accessibility & touch guard: skip all 3D tilt, glare, and parallax if reduced motion or mobile/touch
+  if (isReducedMotion || isCoarsePointer || isSmallScreen) {
+    return;
+  }
 
-    const rotX = ((y - centerY) / centerY) * -12;
-    const rotY = ((x - centerX) / centerX) * 12;
+  const TILT_MAX_DEG = 8;
 
-    gsap.to(img, {
-      rotateX: rotX,
-      rotateY: rotY,
-      scale: 1.05,
-      transformPerspective: 1000,
-      duration: 0.5,
-      ease: 'power2.out'
-    });
-  });
+  // Helper: Card mouse-tracking 3D tilt with dynamic glare and RAF throttling
+  function bind3DTilt(card, maxTilt = TILT_MAX_DEG) {
+    if (!card) return;
 
-  portrait.addEventListener('mouseleave', () => {
-    gsap.to(img, {
-      rotateX: 0,
-      rotateY: 0,
-      scale: 1,
-      duration: 0.8,
-      ease: 'power2.out'
-    });
-  });
-}
+    let isHovering = false;
+    let rafId = null;
+    let targetRotX = 0;
+    let targetRotY = 0;
+    let glareX = 50;
+    let glareY = 50;
 
-// 8b. Project Card 3D Tilt (Linear-style) — .browser-mockup cards
-// -----------------------------------------------------------------
-// Guard the whole feature behind a "fine pointer" check. matchMedia
-// (pointer: fine) is true for mice/trackpads and false for touchscreens,
-// so on touch devices this block never runs and mousemove/mouseleave
-// listeners are never attached — there's no tilt to disable later because
-// it's never enabled. This is more reliable than checking screen width,
-// since it also correctly skips tilt on touch laptops with a mouse absent.
-if (window.matchMedia('(pointer: fine)').matches) {
-
-  const TILT_MAX_DEG = 8;      // Max card rotation on either axis, in degrees
-  const IMAGE_MAX_PX = 12;     // Max opposite-direction image drift, in pixels
-
-  // One handler per card, since each card tracks its own bounding box and
-  // owns its own image element.
-  document.querySelectorAll('.browser-mockup').forEach((card) => {
-    const img = card.querySelector('.browser-window img');
-    if (!img) return; // Skip cards that don't have the expected inner image
-
-    card.addEventListener('mousemove', (e) => {
+    const onMouseMove = (e) => {
       const rect = card.getBoundingClientRect();
-
-      // Cursor position relative to the card's own top-left corner, not the
-      // viewport — this is what lets the same formula work for a card
-      // anywhere on the page.
       const x = e.clientX - rect.left;
       const y = e.clientY - rect.top;
 
-      // Cursor position re-centered so the middle of the card is (0, 0)
-      // and the edges are ±half the card's width/height. This is the
-      // "distance from center" that drives the tilt amount.
-      const px = x - rect.width / 2;
-      const py = y - rect.height / 2;
+      // Distance from center (-1 to 1)
+      const px = (x - rect.width / 2) / (rect.width / 2);
+      const py = (y - rect.height / 2) / (rect.height / 2);
 
-      // Normalize to a -1...1 range by dividing by the half-width/height,
-      // then scale by the max degrees. Note the axis swap: horizontal
-      // cursor movement (px) drives rotation AROUND the Y axis, and
-      // vertical movement (py) drives rotation around the X axis — that's
-      // just how 3D rotation axes work (rotateX tips the top/bottom edge
-      // toward/away from you, which is caused by up/down cursor motion).
-      const rotY = (px / (rect.width / 2)) * TILT_MAX_DEG;
-      // Inverted (negative) because moving the cursor toward the TOP of
-      // the card (negative py) should tilt the top edge UP, toward the
-      // viewer — without the flip it would tilt away, which reads as
-      // "pushing down" instead of "lifting toward you".
-      const rotX = -(py / (rect.height / 2)) * TILT_MAX_DEG;
+      // Clamped rotation degrees
+      targetRotY = Math.max(-maxTilt, Math.min(maxTilt, px * maxTilt));
+      targetRotX = Math.max(-maxTilt, Math.min(maxTilt, -py * maxTilt));
 
-      // Card itself: instant follow (duration: 0) so it feels physically
-      // pinned to the cursor with zero lag, the way Linear's cards do.
-      // transformPerspective is set here (rather than only in CSS) so GSAP
-      // is aware of the 3D context when it computes the rotation matrix.
+      // Glare center coordinates in percentages
+      glareX = Math.max(0, Math.min(100, (x / rect.width) * 100));
+      glareY = Math.max(0, Math.min(100, (y / rect.height) * 100));
+
+      if (!rafId) {
+        rafId = requestAnimationFrame(updateFrame);
+      }
+    };
+
+    const updateFrame = () => {
+      rafId = null;
+      if (!isHovering) return;
+
+      // Update glare position custom properties for dynamic light
+      card.style.setProperty('--mx', `${glareX.toFixed(1)}%`);
+      card.style.setProperty('--my', `${glareY.toFixed(1)}%`);
+
       gsap.to(card, {
-        rotateX: rotX,
-        rotateY: rotY,
-        transformPerspective: 1000,
-        duration: 0,
-        ease: 'none',
-        overwrite: 'auto' // Cancels any in-flight leave-tween immediately
-      });
-
-      // Inner image: same normalized -1...1 values, but inverted and at a
-      // smaller max displacement (12px vs 8deg of rotation). Inverting the
-      // sign makes the image drift OPPOSITE the tilt direction — e.g. when
-      // the card's right edge tilts toward the viewer, the image nudges
-      // left — which is what sells the illusion of the image sitting on a
-      // separate depth layer inside the card (parallax) rather than being
-      // painted flat onto it.
-      gsap.to(img, {
-        x: -(px / (rect.width / 2)) * IMAGE_MAX_PX,
-        y: -(py / (rect.height / 2)) * IMAGE_MAX_PX,
-        scale: 1.03, // Folds in the "lift" scale the old CSS :hover rule used to do
-        duration: 0,
-        ease: 'none',
+        rotateX: targetRotX,
+        rotateY: targetRotY,
+        transformPerspective: 1200,
+        duration: 0.15,
+        ease: 'power1.out',
         overwrite: 'auto'
       });
-    });
+    };
 
-    card.addEventListener('mouseleave', () => {
-      // Spring back to flat. power3.out (fast start, gentle settle) reads
-      // as "premium" and controlled; swap to 'elastic.out(1, 0.5)' instead
-      // if you want a visible overshoot/bounce rather than a clean settle —
-      // power3 was chosen here to match the "purposeful, not gimmicky" brief.
+    const onMouseEnter = () => {
+      isHovering = true;
+      card.style.willChange = 'transform';
+    };
+
+    const onMouseLeave = () => {
+      isHovering = false;
+      if (rafId) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+
+      // Smooth ease back to flat over ~0.6s
       gsap.to(card, {
         rotateX: 0,
         rotateY: 0,
         duration: 0.6,
-        ease: 'power3.out',
-        overwrite: 'auto'
+        ease: 'cubic-bezier(0.2, 0.8, 0.2, 1)',
+        overwrite: 'auto',
+        onComplete: () => {
+          card.style.willChange = 'auto';
+        }
       });
+    };
 
-      gsap.to(img, {
-        x: 0,
-        y: 0,
-        scale: 1,
-        duration: 0.6,
-        ease: 'power3.out',
-        overwrite: 'auto'
+    card.addEventListener('mouseenter', onMouseEnter);
+    card.addEventListener('mousemove', onMouseMove);
+    card.addEventListener('mouseleave', onMouseLeave);
+  }
+
+  // 1. Setup Hero 3D Card Tilt
+  const heroCard = document.getElementById('heroCard');
+  if (heroCard) {
+    bind3DTilt(heroCard, TILT_MAX_DEG);
+  }
+
+  // 2. Setup Project Cards 3D Tilt (#builds)
+  const projectCards = document.querySelectorAll('.project-card');
+  projectCards.forEach((card) => {
+    bind3DTilt(card, TILT_MAX_DEG);
+  });
+
+  // 3. Multi-plane Background & Depth Parallax via gsap.quickTo
+  const gridOverlay = document.querySelector('.grid-overlay');
+  const ambientOrbs = document.querySelectorAll('#ambientBlue, #ambientDark, #spotlight');
+  const heroTitle = document.querySelector('.hero-title');
+  const heroRings = document.querySelector('.hero-rings');
+
+  if (gridOverlay || ambientOrbs.length || heroTitle || heroRings) {
+    const quickGridX = gridOverlay ? gsap.quickTo(gridOverlay, 'x', { duration: 0.8, ease: 'power2.out' }) : null;
+    const quickGridY = gridOverlay ? gsap.quickTo(gridOverlay, 'y', { duration: 0.8, ease: 'power2.out' }) : null;
+
+    const quickOrbsX = ambientOrbs.length ? gsap.quickTo(ambientOrbs, 'x', { duration: 1.0, ease: 'power2.out' }) : null;
+    const quickOrbsY = ambientOrbs.length ? gsap.quickTo(ambientOrbs, 'y', { duration: 1.0, ease: 'power2.out' }) : null;
+
+    const quickTitleX = heroTitle ? gsap.quickTo(heroTitle, 'x', { duration: 0.6, ease: 'power2.out' }) : null;
+    const quickTitleY = heroTitle ? gsap.quickTo(heroTitle, 'y', { duration: 0.6, ease: 'power2.out' }) : null;
+
+    const quickRingsX = heroRings ? gsap.quickTo(heroRings, 'x', { duration: 0.8, ease: 'power2.out' }) : null;
+    const quickRingsY = heroRings ? gsap.quickTo(heroRings, 'y', { duration: 0.8, ease: 'power2.out' }) : null;
+
+    let parallaxRaf = null;
+    const onWindowMouseMove = (e) => {
+      if (parallaxRaf) return;
+      parallaxRaf = requestAnimationFrame(() => {
+        parallaxRaf = null;
+        const cx = window.innerWidth / 2;
+        const cy = window.innerHeight / 2;
+        const dx = e.clientX - cx;
+        const dy = e.clientY - cy;
+
+        // Depth ratios: 0.02 (grid), 0.05 (ambient orbs), 0.1 (hero title), 0.03 (wireframe rings)
+        if (quickGridX && quickGridY) {
+          quickGridX(dx * 0.02);
+          quickGridY(dy * 0.02);
+        }
+        if (quickOrbsX && quickOrbsY) {
+          quickOrbsX(dx * 0.05);
+          quickOrbsY(dy * 0.05);
+        }
+        if (quickTitleX && quickTitleY) {
+          quickTitleX(dx * 0.1);
+          quickTitleY(dy * 0.1);
+        }
+        if (quickRingsX && quickRingsY) {
+          quickRingsX(dx * 0.03);
+          quickRingsY(dy * 0.03);
+        }
       });
+    };
+
+    window.addEventListener('mousemove', onWindowMouseMove, { passive: true });
+  }
+
+  // 4. Smooth Anchor Link Navigation via Lenis
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener('click', function (e) {
+      const targetId = this.getAttribute('href');
+      if (targetId && targetId !== '#') {
+        const targetElement = document.querySelector(targetId);
+        if (targetElement && typeof lenis !== 'undefined') {
+          e.preventDefault();
+          lenis.scrollTo(targetElement, { offset: -40, duration: 1.2 });
+        }
+      }
     });
   });
 }
+
+// Initialize Phase 1 3D & Parallax Interactions
+initPhase1HeroAndBuilds();
 
 // 9. Marquee speed variation on scroll
 const tickerTrack = document.querySelector('.ticker-track');
@@ -838,7 +879,7 @@ if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
     gsap.to('#ambientBlue', {
       opacity: 1,
       scrollTrigger: {
-        trigger: '#featured-build',
+        trigger: '#builds',
         start: 'top bottom',
         end: 'top center',
         scrub: true

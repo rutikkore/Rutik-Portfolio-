@@ -101,8 +101,28 @@
       </div>
 
       <div class="hero-portrait">
-        <div class="portrait-wrapper" id="heroPortrait">
-          <img src="assets/images/rutik-image.jpeg" alt="Rutik Kore" loading="eager" />
+        <!-- PHASE 1: Hero Accent Wireframe Rings -->
+        <div class="hero-rings" aria-hidden="true">
+          <div class="hero-ring hero-ring-1"></div>
+          <div class="hero-ring hero-ring-2"></div>
+          <div class="hero-ring hero-ring-3"></div>
+        </div>
+
+        <!-- PHASE 1: Hero 3D Card with 3 Layers -->
+        <div class="hero-card" id="heroCard">
+          <div class="card-glare" aria-hidden="true"></div>
+          <!-- Layer 1: Frame / Outer border (translateZ: 0) -->
+          <div class="hero-card-frame">
+            <!-- Layer 2: Photo (translateZ: 20px) -->
+            <div class="portrait-wrapper" id="heroPortrait">
+              <img src="assets/images/rutik-image.jpeg" alt="Rutik Kore" loading="eager" />
+            </div>
+          </div>
+          <!-- Layer 3: Status Tag (translateZ: 40px) -->
+          <div class="hero-status-tag">
+            <span class="status-dot"></span>
+            Available for Work | Thane, IN
+          </div>
         </div>
       </div>
     </div>
@@ -194,88 +214,97 @@
     </div>
   </section>
 
-   <!-- FEATURED BUILD: MEDNEXUS -->
-  <section class="builds-section" id="featured-build">
-    <div class="container">
-      <article class="case-study-grid">
-        <div class="case-study-details">
-          <span class="case-study-number">01 / FEATURED BUILD</span>
-          <h2 class="display-medium">MEDNEXUS</h2>
-          <span class="label-mono">Unified Healthcare Gateway</span>
-          <div class="case-study-meta">
-            <span class="meta-pill">Next.js</span>
-            <span class="meta-pill">Redis</span>
-            <span class="meta-pill">Fastify</span>
-            <span class="meta-pill">PostgreSQL</span>
-            <span class="meta-pill">REST API</span>
-          </div>
-
-          <div class="case-study-block">
-            <h3 class="case-study-block-title">Problem</h3>
-            <p class="case-study-block-desc">
-              Siloed diagnostic networks delay patient profiling and query speeds in clinical emergency scenarios.
-            </p>
-          </div>
-
-          <div class="case-study-block">
-            <h3 class="case-study-block-title">Solution</h3>
-            <p class="case-study-block-desc">
-              A unified FHIR-compliant electronic health records gateway that aggregates patient data with sub-100ms
-              fetch times.
-            </p>
-          </div>
-
-          <div class="case-study-block">
-            <h3 class="case-study-block-title">Challenges & Resolution</h3>
-            <p class="case-study-block-desc">
-              Legacy databases are slow and rigid. Handled by creating optimized SQL views and implementing a
-              write-through Redis cache layer.
-            </p>
-          </div>
-
-          <div class="case-study-impact">
-            <div class="impact-metric">
-              <span class="metric-value">84ms</span>
-              <span class="metric-label">Avg API Latency</span>
-            </div>
-            <div class="impact-metric">
-              <span class="metric-value">99.98%</span>
-              <span class="metric-label">Gateway Uptime</span>
-            </div>
-          </div>
-
-          <div class="case-study-actions">
-            <a href="https://github.com/rutikkore/mednex" class="btn-premium btn-magnetic accent-btn" target="_blank"
-              rel="noopener noreferrer">
-              View GitHub
-            </a>
-            <a href="https://mednexus-gray.vercel.app/" class="btn-link">
-              Launch Live Demo
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="7" y1="17" x2="17" y2="7"></line>
-                <polyline points="7 7 17 7 17 17"></polyline>
-              </svg>
-            </a>
-          </div>
-        </div>
-
-        <div class="case-study-visual">
-          <img src="assets/images/mednexus-screenshot.png" 
-               alt="MedNexus dashboard screenshot"
-               style="width:100%; border-radius:8px;">
-        </div>
-      </article>
-    </div>
-  </section>
-
-  <!-- BUILDS SECTION -->
+  <!-- BUILDS SECTION (PHASE 1: Unified #builds with consistent .project-card structure) -->
   <section class="builds-section" id="builds">
     <div class="container">
 
-      <!-- Project Case Study 2: Carbon Footprint Tracker -->
-      <article class="case-study">
+      <!-- Project 1: MedNexus -->
+      <article class="project-card case-study">
+        <div class="card-glare" aria-hidden="true"></div>
         <div class="case-study-grid">
-          <div class="case-study-details">
+          <div class="project-body case-study-details">
+            <span class="case-study-number">01 / FEATURED BUILD</span>
+            <h2 class="display-medium">MEDNEXUS</h2>
+            <span class="label-mono">Unified Healthcare Gateway</span>
+            <div class="case-study-meta">
+              <span class="meta-pill">Next.js</span>
+              <span class="meta-pill">Redis</span>
+              <span class="meta-pill">Fastify</span>
+              <span class="meta-pill">PostgreSQL</span>
+              <span class="meta-pill">REST API</span>
+            </div>
+
+            <div class="case-study-block">
+              <h3 class="case-study-block-title">Problem</h3>
+              <p class="case-study-block-desc">
+                Siloed diagnostic networks delay patient profiling and query speeds in clinical emergency scenarios.
+              </p>
+            </div>
+
+            <div class="case-study-block">
+              <h3 class="case-study-block-title">Solution</h3>
+              <p class="case-study-block-desc">
+                A unified FHIR-compliant electronic health records gateway that aggregates patient data with sub-100ms
+                fetch times.
+              </p>
+            </div>
+
+            <div class="case-study-block">
+              <h3 class="case-study-block-title">Challenges & Resolution</h3>
+              <p class="case-study-block-desc">
+                Legacy databases are slow and rigid. Handled by creating optimized SQL views and implementing a
+                write-through Redis cache layer.
+              </p>
+            </div>
+
+            <div class="case-study-impact">
+              <div class="impact-metric">
+                <span class="metric-value">84ms</span>
+                <span class="metric-label">Avg API Latency</span>
+              </div>
+              <div class="impact-metric">
+                <span class="metric-value">99.98%</span>
+                <span class="metric-label">Gateway Uptime</span>
+              </div>
+            </div>
+
+            <div class="case-study-actions">
+              <a href="https://github.com/rutikkore/mednex" class="btn-premium btn-magnetic accent-btn" target="_blank"
+                rel="noopener noreferrer">
+                View GitHub
+              </a>
+              <a href="https://mednexus-gray.vercel.app/" class="btn-link">
+                Launch Live Demo
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="7" y1="17" x2="17" y2="7"></line>
+                  <polyline points="7 7 17 7 17 17"></polyline>
+                </svg>
+              </a>
+            </div>
+          </div>
+
+          <div class="project-media case-study-visual">
+            <div class="browser-mockup hover-trigger-view">
+              <div class="browser-header">
+                <span class="browser-dot"></span>
+                <span class="browser-dot"></span>
+                <span class="browser-dot"></span>
+              </div>
+              <div class="browser-window">
+                <img src="assets/images/mednexus-screenshot.png" 
+                     alt="MedNexus dashboard screenshot"
+                     loading="lazy" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- Project Case Study 2: Carbon Footprint Tracker -->
+      <article class="project-card case-study">
+        <div class="card-glare" aria-hidden="true"></div>
+        <div class="case-study-grid">
+          <div class="project-body case-study-details">
             <span class="case-study-number">02 / BUILD</span>
             <h2 class="display-medium">CARBON TRACKER</h2>
             <span class="label-mono">Personal Emission Audit Tool</span>
@@ -338,7 +367,7 @@
             </div>
           </div>
 
-          <div class="case-study-visual">
+          <div class="project-media case-study-visual">
             <div class="browser-mockup hover-trigger-view">
               <div class="browser-header">
                 <span class="browser-dot"></span>
